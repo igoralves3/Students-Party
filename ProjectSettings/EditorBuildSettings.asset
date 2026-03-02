@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/TitleScreen.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/PlayerSettings.unity
+    guid: 9d0cf22eb0ef79e4c911da7fc1dee38a
+  - enabled: 1
+    path: Assets/Scenes/MiniGame Select.unity
+    guid: 0e7c22a8c48d0574880b09427547a1be
+  - enabled: 1
+    path: Assets/Scenes/MiniGameRules.unity
+    guid: 28e6bd33c99025d4abb9a030557753b2
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Coconut Clash.unity
+    guid: 555260aa9d0520149a1ae78555a3b68d
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Hallway Flag.unity
+    guid: 07db142aefaacf343bd8e187dce9a718
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Trouble Tag.unity
+    guid: 0f567221061bad749b80355ada57177b
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Bag Capture.unity
+    guid: 8ce119476023d14459e044ab75d8a882
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Gridroom Paint.unity
+    guid: 75a86fb271b6e704a86d57dfd5a40a79
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Splash Fun.unity
+    guid: bdd405d07cbeaaa4e9edfe385c0a0236
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Top Spin Slide.unity
+    guid: f3abdf92558e97e4aa925b38e1343931
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Pitch Battle.unity
+    guid: 79d198f4a4adc3c4884bf7d6302629d5
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/Treasure Hunt.unity
+    guid: 463fbd80b2eb6744fa15e67b715cac76
+  - enabled: 1
+    path: Assets/Scenes/MiniGames/MiniGameRanking.unity
+    guid: 8027b5c1a668c0540ab483855e73e491
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 20a094cb953f90c43b9be06286070a05, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: fd36cc6bd5de87743b9e4b02cdc2b380, type: 3}
+  m_UseUCBPForAssetBundles: 0

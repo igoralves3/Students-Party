@@ -28,7 +28,7 @@ public class BagCaptureManager : MonoBehaviour
 
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        timeLeft = 60.0f;
+        timeLeft = 30.0f;
 
         text = GameObject.Find("Placar").GetComponent<TextMeshProUGUI>();
     }

@@ -9,6 +9,11 @@ using TMPro;
 
 public class RulesInfo : MonoBehaviour
 {
+    [SerializeField] private GameObject[] paineis;
+
+    [SerializeField] private UnityEngine.UI.Button[] botoes;
+
+    [SerializeField] private TextMeshProUGUI miniGameTitle;
 
     public Canvas canvas;
     public TextMeshProUGUI text;
@@ -17,86 +22,213 @@ public class RulesInfo : MonoBehaviour
     void Start()
     {
         text = GameObject.Find("TextRules").GetComponent<TextMeshProUGUI>();
+
+        var backButton = GameObject.Find("BackButton").GetComponent<UnityEngine.UI.Button>();
+
+        miniGameTitle = GameObject.Find("MinigameTitle").GetComponent<TextMeshProUGUI>();
+        if (GameManager.mode != "Free Battle")
+        {
+            backButton.enabled = false;
+        }
+
+        AtualizaTexto(0);
     }
 
     // Update is called once per frame
     void Update()
     {
-       // if (Input.GetKey(KeyCode.Space))
-        //{
-          //  SceneManager.LoadScene(GameManager.game, LoadSceneMode.Single);
-        //}
+      
     }
 
-    void OnGUI()
+
+    public void TrocarPainel(int index)
+    {
+        for (int i = 0; i < botoes.Length; i++)
+        {
+            botoes[i].interactable=true;
+        }
+
+        botoes[index].interactable=false;
+
+        AtualizaTexto(index);
+    }
+
+    void AtualizaTexto(int index)
     {
         string newText = "";
 
         switch (GameManager.game)
         {
             case "Coconut Clash":
-                newText += "Coconut Clash\n" + "\nThrow coconuts on your teacher!"
-                           + "\nArrow keys: Move"
-                            +"\nSpace bar: Throw Coconut";
-                
+                miniGameTitle.text = "Coconut Clash";
+
+                switch (index) {
+                    case 0:
+                     newText += "\nThrow coconuts on your teacher!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Move"
+                            + "\nSpace bar: Throw Coconut";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Move"
+                            + "\nSouth button: Throw Coconut";
+                        break;
+                    default: break;
+
+                 }
                 break;
             case "Hallway Flag":
-                newText += "Hallway Flag\n" + "\nAvoid the hurdles and get the flag first!"
-                           + "\nArrow keys: Move"
+                miniGameTitle.text = "Hallway Flag\n";
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nAvoid the hurdles and get the flag first!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Move"
                             + "\nSpace bar: Jump";
-                
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Move"
+                            + "\nSouth button: Jump";
+                        break;
+                    default: break;
+
+                }
                 break;
             case "Trouble Tag":
-                newText += "Trouble Tag\n" + "\nDon't get caught by your teacher!"
-                           + "\nArrow keys: Move";
-               
+                miniGameTitle.text = "Trouble Tag\n";
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nDon't get caught by your teacher!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Move";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Move";
+                        break;
+                    default: break;
+
+                }
                 break;
 
             case "Bag Capture":
-                newText += "Bag Capture\n" + "\nDon't get caught by your teacher!"
-                    + "\nBehold the bag unil the time runs out!"
-                           + "\nArrow keys: Move";
-                           
-                
+                miniGameTitle.text = "Bag Capture\n";
+
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nBehold the bag unil the time runs out!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Move";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Move";
+                        break;
+                    default: break;
+
+                }
                 break;
             case "Gridroom Paint":
-                newText += "Gridroom Paint\n" + "\nPaint the most floor parts when the time runs out!"
-                   
-                          + "\nArrow keys:  Change move direction";
-                
+                miniGameTitle.text = "Gridroom Paint\n";
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nPaint the most floor parts when the time runs out!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys:  Change move direction";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick:  Change move direction";
+                        break;
+                    default: break;
+
+                }
                 break;
             case "Splash Fun":
-                
-                newText += "Splash Fun\n" + "\nThrow water or balloons on classmates!"
 
-                                         + "\nArrow keys: Move" + "\nZ: Fire water" + "\nX: Throw balloon";
+                miniGameTitle.text = "Splash Fun\n";
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nThrow water or balloons on classmates!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Move\nZ: Fire water\nX: Throw balloon";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Move\nNorth button: Fire water\nEast/west button: Throw balloon";
+                        break;
+                    default: break;
 
+                }
                 break;
             case "Top Spin Slide":
-               
 
-                newText += "Top Spin Slide\n" + "\nKnock the tops to earn points!"
 
-                                        + "\nSpace bar: Slide your top";
+                miniGameTitle.text = "Top Spin Slide\n";
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nKnock the tops to earn points!";
+                        break;
+                    case 1:
+                        newText += "\nSpace bar: Slide your top";
+                        break;
+                    case 2:
+                        newText += "\nSouth button: Slide your top";
+                        break;
+                    default: break;
 
+                }
                 break;
             case "Pitch Battle":
-                
 
-                newText += "Pitch Battle\n" + "\nThrow balls on opponents!"
 
-                                        + "\nArrow keys: Select Target"
-                                        + "\nHold space bar: Charge pitch"
-                                         + "\nRelease space bar: Pitch";
+                miniGameTitle.text = "Pitch Battle\n";
+                 switch (index)
+                {
+                    case 0:
+                        newText += "\nThrow balls on opponents!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Select Target"
+                                        + "\nHold space bar: Charge pitch" + "\nRelease space bar: Pitch";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Select Target"
+                                        + "\nHold South button: Charge pitch" + "\nRelease South button: Pitch";
+                        break;
+                    default: break;
+
+                }
+               
 
                 break;
             case "Treasure Hunt":
-                
-                newText += "Treasure Hunt\n" + "\nFind treasures inside backpacks!"
 
-                                        + "\nArrow keys: Movet"
-                                        + "\nHold space bar: Open backpack";
+                miniGameTitle.text = "Treasure Hunt\n" + "\nFind treasures inside backpacks!";
+                switch (index)
+                {
+                    case 0:
+                        newText += "\nFind treasures inside backpacks!";
+                        break;
+                    case 1:
+                        newText += "\nArrow keys: Move"
+                                        + "\nSpace bar: Open backpack";
+                        break;
+                    case 2:
+                        newText += "\nD-pad/Left Stick: Move"
+                                       + "\nSouth button: Open backpack";
+                        break;
+                    default: break;
 
+                }
                 break;
             default:
                 break;

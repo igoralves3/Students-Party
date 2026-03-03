@@ -123,10 +123,7 @@ public class GameManager : MonoBehaviour
         {
             mode = "Free Battle";
         }
-        if (scene.name == "MiniGameRanking")
-        {
-            text = GameObject.Find("TextResults").GetComponent<TextMeshProUGUI>();
-        }
+       
 
             guis.fontSize = 40;
     }
@@ -134,51 +131,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var scene = SceneManager.GetActiveScene();
+       
         
-    }
-
-    void OnGUI()
-    {
-        var newText = "";
-
-        var scene = SceneManager.GetActiveScene();
-
-        if (scene.name == "MiniGameRanking")
-        {
-           
-            newText += "\nP1: " + p1.Rank.ToString();
-
-           
-            newText += "\nP2: " + p2.Rank.ToString();
-
-           
-            newText += "\nP3: " + p3.Rank.ToString();
-
-           
-
-            newText += "\nP4: " + p4.Rank.ToString();
-
-           
-
-            Player[] players = { p1, p2, p3, p4 };
-            bool draw = false;
-            Player winner = p1;
-            for (int i = 1; i < 4; i++)
-            {
-                if (players[i].Rank == 1)
-                {
-                    
-                        winner = players[i];
-                    
-                }
-               
-            }
-            newText += "\nCongratulations, Player " + winner.Number;
-            
-
-            text.text = newText;
-        }
 
     }
 

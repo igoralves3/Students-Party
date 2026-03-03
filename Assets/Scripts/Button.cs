@@ -70,16 +70,25 @@ public class Button : MonoBehaviour
         switch (Name)
         {
             case "Free Battle":
+                GameManager.mode = Name;
                 SceneManager.LoadScene("PlayerSettings");
-                //SceneManager.LoadScene("MiniGame Select");
+                
                 break;
             case "Start":
                
                 SceneManager.LoadScene(GameManager.game);
                 break;
             case "Back":
-                SceneManager.LoadScene("TitleScreen");
-                break;
+                var scene = SceneManager.GetActiveScene();
+                if (scene.name == "PlayerSettings") {
+                    SceneManager.LoadScene("TitleScreen");
+                }else if (scene.name == "MiniGame Select")
+                {
+                    SceneManager.LoadScene("PlayerSettings");
+                }else if (scene.name == "MiniGameRules" && GameManager.mode == "Free Battle") {
+                    SceneManager.LoadScene("MiniGame Select");
+                }
+                    break;
             case "Return":
                 GameManager.p1.Rank = 0;
                 GameManager.p2.Rank = 0;

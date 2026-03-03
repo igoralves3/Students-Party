@@ -29,7 +29,7 @@ public class PitchBattleManager : MonoBehaviour
         p4 = GameObject.Find("Player4").GetComponent<PitchBattlePlayer>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        timeLeft = 60.0f;
+        timeLeft = 30.0f;
 
         text = GameObject.Find("Placar").GetComponent<TextMeshProUGUI>();
     }

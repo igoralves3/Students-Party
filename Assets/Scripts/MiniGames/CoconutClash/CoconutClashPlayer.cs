@@ -246,7 +246,7 @@ public class CoconutClashPlayer : MonoBehaviour
                 if (!canThrow)
                 {
                     waitThrowFrames++;
-                    if (waitThrowFrames >= 600)
+                    if (waitThrowFrames >= 60)
                     {
                         waitThrowFrames = 0;
                         canThrow = true;

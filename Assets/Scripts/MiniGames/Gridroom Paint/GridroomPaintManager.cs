@@ -27,7 +27,7 @@ public class GridroomPaintManager : MonoBehaviour
         p3 = GameObject.Find("Player3").GetComponent<GridroomPaintPlayer>();
         p4 = GameObject.Find("Player4").GetComponent<GridroomPaintPlayer>();
 
-        timeLeft = 60.0f;
+        timeLeft = 30.0f;
 
         text = GameObject.Find("Placar").GetComponent<TextMeshProUGUI>();
     }

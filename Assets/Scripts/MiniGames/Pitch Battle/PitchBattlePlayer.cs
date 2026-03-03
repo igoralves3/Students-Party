@@ -243,7 +243,7 @@ public class PitchBattlePlayer : MonoBehaviour
                 if (charging)
                 {
                     strength += 1f + Time.deltaTime;
-                    if (strength >= 10f)
+                    if (strength >= 20f)
                     {
                         strength = 1f;
                     }

@@ -299,7 +299,7 @@ public class SplashFunPlayer : MonoBehaviour
                     podeVerOponente = true;
                 }
 
-                if (deltaN <= 20 && deltaN > 10 && podeVerOponente)
+                if (deltaN <= 10 && deltaN > 5)
                 {
                     if (podeAtirar)
                     {
@@ -309,7 +309,7 @@ public class SplashFunPlayer : MonoBehaviour
                     else
                     {
                         delayShootFrames++;
-                        if (delayShootFrames >= 6000)
+                        if (delayShootFrames >= 600)
                         {
                             delayShootFrames = 0;
                             podeAtirar = true;
@@ -318,7 +318,7 @@ public class SplashFunPlayer : MonoBehaviour
                     
                 }
 
-                if (deltaN <= 10 && podeVerOponente)
+                if (deltaN <= 5)
                 {
                     if (balloonsLeft > 0 && Random.Range(0f, 100f) >= 60f)
                     {

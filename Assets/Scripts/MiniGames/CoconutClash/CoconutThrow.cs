@@ -73,7 +73,7 @@ public class CoconutThrow : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("colidiu");
+        
         if (collision.gameObject.CompareTag("Player") && !colidiu)
         {
             colidiu = true;

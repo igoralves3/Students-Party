@@ -212,7 +212,7 @@ public class RulesInfo : MonoBehaviour
                 break;
             case "Treasure Hunt":
 
-                miniGameTitle.text = "Treasure Hunt\n" + "\nFind treasures inside backpacks!";
+                miniGameTitle.text = "Treasure Hunt\n";
                 switch (index)
                 {
                     case 0:

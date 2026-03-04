@@ -1,6 +1,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Reflection;
 using TMPro;
@@ -48,6 +49,8 @@ public class TopSpinSlideManager : MonoBehaviour
         {
             timeLeft = 0;
 
+            AtualizaTexto();
+            Debug.Log(text.text);
 
             SortResults();
 
@@ -76,10 +79,11 @@ public class TopSpinSlideManager : MonoBehaviour
                 nextY = Random.Range(0f, 6f) - 4f;
 
                 var t = Instantiate(sliderTop, new Vector3(nextX, nextY, 0f), Quaternion.identity);
-            } 
+            }
+        AtualizaTexto();
     }
 
-    void OnGUI()
+    void AtualizaTexto()
     {
         var newText = "";
 
@@ -106,19 +110,36 @@ public class TopSpinSlideManager : MonoBehaviour
     void SortResults()
     {
 
-        var jogadores = FindObjectsOfType<TopSpinSlidePlayer>()
-         .OrderBy(j => j.score)
-         .ToList();
+        var jogadores = new List<TopSpinSlidePlayer>() { p1, p2, p3, p4 };
+        //.OrderByDescending(j => j.score)
+        //.ToList();
+        jogadores.Sort((a, b) => b.score.CompareTo(a.score));
 
-        for (int i = 0; i < jogadores.Count; i++)
+
+        int posicao = 0;
+        int contador = 0;
+        int? pontosAnterior = null;
+
+        foreach (var jogador in jogadores)
         {
-            jogadores[i].Rank = 4 - i;
+            contador++;
+
+            if (pontosAnterior == null || jogador.score != pontosAnterior)
+            {
+                posicao = contador;
+
+            }
+            jogador.Rank = posicao;
+
+
+          
+            pontosAnterior = jogador.score;
         }
 
-        GameManager.p1.Rank = p1.Rank;
-        GameManager.p2.Rank = p2.Rank;
-        GameManager.p3.Rank = p3.Rank;
-        GameManager.p4.Rank = p4.Rank;
+        GameManager.p1.Rank = jogadores.Find(p => p.PlayerNumber == 1).Rank;
+        GameManager.p2.Rank = jogadores.Find(p => p.PlayerNumber == 2).Rank;
+        GameManager.p3.Rank = jogadores.Find(p => p.PlayerNumber == 3).Rank;
+        GameManager.p4.Rank = jogadores.Find(p => p.PlayerNumber == 4).Rank;
 
     }
 }

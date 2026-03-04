@@ -10,7 +10,7 @@ public class TreasureHuntPlayer : MonoBehaviour
 
     public int PlayerNumber;
     public bool isAI;
-    public float score;
+    public int score;
     public int Rank;
 
     private float speed;
@@ -20,6 +20,7 @@ public class TreasureHuntPlayer : MonoBehaviour
     public BoxCollider2D bc;
 
     public NavMeshAgent agent;
+    public Backpack mochilaAtual;
 
     private PlayerInput playerInput;
 
@@ -121,7 +122,7 @@ public class TreasureHuntPlayer : MonoBehaviour
         else
         {
 
-            if (agent.destination == null)
+            if (mochilaAtual.isOpen || agent.destination == null)
             {
                 EscolheMochila();
             }
@@ -141,12 +142,14 @@ public class TreasureHuntPlayer : MonoBehaviour
                 mochilasFechadas.Add(m.GetComponent<Backpack>());
             }
         }
-
-        var indexMochila = Random.Range(0, mochilasFechadas.Count);
-        agent.SetDestination(mochilasFechadas[indexMochila].transform.position);
+        if (mochilasFechadas.Count > 0) {
+            var indexMochila = Random.Range(0, mochilasFechadas.Count);
+            mochilaAtual = mochilasFechadas[indexMochila];
+            agent.SetDestination(mochilaAtual.transform.position);
+        }
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
    
         if (collision.gameObject.tag == "Backpack")

@@ -11,7 +11,7 @@ public class GridroomPaintPlayer : MonoBehaviour
 
     public int PlayerNumber;
     public bool isAI;
-    public float score;
+    public int score;
     public int Rank;
     public Color color;
 

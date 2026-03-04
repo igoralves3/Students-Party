@@ -4,13 +4,10 @@ using System.Collections.Generic;
 
 using System.Linq;
 using System.Reflection;
-
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 using UnityEngine.UI;
-
-using TMPro;
 
 public class CoconutClashManager : MonoBehaviour
 {
@@ -45,46 +42,38 @@ public class CoconutClashManager : MonoBehaviour
         if (timeLeft <= 0)
         {
             timeLeft = 0;
-
+            AtualizaTexto();
+            Debug.Log(text.text);
 
             SortResults();
 
             SceneManager.LoadScene("MiniGameRanking");
         }
+        AtualizaTexto();
     }
 
-    void OnGUI()
+    void AtualizaTexto()
     {
 
         var newText = "";
 
-        //GUI.color = Color.cyan;
-
-        //GUI.Label(new Rect(10, 10, 100, 20), "P1: " + p1.score.ToString());
+        
 
         newText += "\nP1: " + p1.score.ToString();
 
-        //GUI.color = Color.red;
-
-        //GUI.Label(new Rect(10, 20, 100, 20), "P2: " + p2.score.ToString());
+        
 
         newText += "\nP2: " + p2.score.ToString();
 
-        //GUI.color = Color.green;
-
-        //GUI.Label(new Rect(10, 30, 100, 20), "P3: " + p3.score.ToString());
+        
 
         newText += "\nP3: " + p3.score.ToString();
 
-        //GUI.color = Color.yellow;
-
-        //GUI.Label(new Rect(10, 40, 100, 20), "P4: " + p4.score.ToString());
+      
 
         newText += "\nP4: " + p4.score.ToString();
 
-        //GUI.color = Color.black;
-
-        //GUI.Label(new Rect(10, 50, 100, 20), "Time: " + ((int) timeLeft).ToString());
+       
 
         newText += "\nTime: " + ((int)timeLeft).ToString();
 
@@ -93,19 +82,37 @@ public class CoconutClashManager : MonoBehaviour
 
     void SortResults()
     {
-        var jogadores = FindObjectsOfType<CoconutClashPlayer>()
-            .OrderBy(j => j.score)
-            .ToList();
+        var jogadores = new List<CoconutClashPlayer>() { p1, p2, p3, p4 };
+        //.OrderByDescending(j => j.score)
+        //.ToList();
+        jogadores.Sort((a, b) => b.score.CompareTo(a.score));
 
-        for (int i = 0; i < jogadores.Count; i++)
+
+        int posicao = 0;
+        int contador = 0;
+        int? pontosAnterior = null;
+
+        foreach (var jogador in jogadores)
         {
-            jogadores[i].Rank = 4 - i;
+            contador++;
+
+            if (pontosAnterior == null || jogador.score != pontosAnterior)
+            {
+                posicao = contador;
+
+            }
+            jogador.Rank = posicao;
+
+
+            Console.WriteLine($"{posicao} - {jogador.PlayerNumber} - {jogador.score}");
+
+            pontosAnterior = jogador.score;
         }
 
-        GameManager.p1.Rank = p1.Rank;
-        GameManager.p2.Rank = p2.Rank;
-        GameManager.p3.Rank = p3.Rank;
-        GameManager.p4.Rank = p4.Rank;
+        GameManager.p1.Rank = jogadores.Find(p => p.PlayerNumber == 1).Rank;
+        GameManager.p2.Rank = jogadores.Find(p => p.PlayerNumber == 2).Rank;
+        GameManager.p3.Rank = jogadores.Find(p => p.PlayerNumber == 3).Rank;
+        GameManager.p4.Rank = jogadores.Find(p => p.PlayerNumber == 4).Rank;
 
     }
 }

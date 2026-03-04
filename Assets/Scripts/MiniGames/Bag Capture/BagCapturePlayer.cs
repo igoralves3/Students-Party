@@ -13,7 +13,7 @@ public class BagCapturePlayer : MonoBehaviour
 {
     public int PlayerNumber;
     public bool isAI;
-    public float score;
+    public int score;
     public int Rank;
     public bool withBag = false;
     public bool stunned = false;
@@ -160,7 +160,7 @@ public class BagCapturePlayer : MonoBehaviour
             
             
         }
-        Debug.Log("velocidade com bolsa " + agent.speed);
+       
         if (!isAI)
         {
             if (playerInput.actions["Left"].IsPressed())
@@ -229,8 +229,7 @@ public class BagCapturePlayer : MonoBehaviour
                 else
                 {
 
-                Debug.Log("magnitude do Player" + PlayerNumber + " "+agent.velocity.magnitude);
-
+               
                 timer += Time.deltaTime;
 
                 if (timer >= intervalo)
@@ -344,7 +343,6 @@ public class BagCapturePlayer : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             var cp = collision.gameObject.GetComponent<BagCapturePlayer>();
-            Debug.Log("parado " + bag.GetComponent<Bag>().owner.GetComponent<BagCapturePlayer>().stopped + " " + bag.GetComponent<Bag>().owner);
             
             if (bag.GetComponent<Bag>().owner == collision.gameObject && stopped == false) {
                 // canSteal = true;

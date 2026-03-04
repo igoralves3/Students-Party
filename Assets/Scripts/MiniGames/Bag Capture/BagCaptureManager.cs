@@ -1,14 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using System.Linq;
 using System.Reflection;
-
-using UnityEngine.UI;
-
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class BagCaptureManager : MonoBehaviour
 {
@@ -41,17 +40,21 @@ public class BagCaptureManager : MonoBehaviour
         {
             timeLeft = 0;
 
-           
+            var bag = GameObject.Find("Bag").GetComponent<Bag>();
 
-            
+            bag.owner.GetComponent<BagCapturePlayer>().score = 99;
+
+            AtualizaTexto();
+            Debug.Log(text.text);
 
             SortResults();
 
             SceneManager.LoadScene("MiniGameRanking");
         }
+        AtualizaTexto();
     }
 
-    void OnGUI()
+    void AtualizaTexto()
     {
 
         var newText = "";
@@ -81,22 +84,39 @@ public class BagCaptureManager : MonoBehaviour
     void SortResults()
     {
 
-        var bag = GameObject.Find("Bag").GetComponent<Bag>();
+        
 
-        bag.owner.GetComponent<BagCapturePlayer>().score = 99;
+        var jogadores = new List<BagCapturePlayer>() { p1, p2, p3, p4 };
+        //.OrderByDescending(j => j.score)
+        //.ToList();
+        jogadores.Sort((a, b) => b.score.CompareTo(a.score));
 
-        var jogadores = FindObjectsOfType<BagCapturePlayer>()
-           .OrderBy(j => j.score)
-           .ToList();
 
-        for (int i = 0; i < jogadores.Count; i++)
+        int posicao = 0;
+        int contador = 0;
+        int? pontosAnterior = null;
+
+        foreach (var jogador in jogadores)
         {
-            jogadores[i].Rank = 4 - i;
+            contador++;
+
+            if (pontosAnterior == null || jogador.score != pontosAnterior)
+            {
+                posicao = contador;
+
+            }
+            jogador.Rank = posicao;
+
+
+            Console.WriteLine($"{posicao} - {jogador.PlayerNumber} - {jogador.score}");
+
+            pontosAnterior = jogador.score;
         }
-        GameManager.p1.Rank = p1.Rank;
-        GameManager.p2.Rank = p2.Rank;
-        GameManager.p3.Rank = p3.Rank;
-        GameManager.p4.Rank = p4.Rank;
+
+        GameManager.p1.Rank = jogadores.Find(p => p.PlayerNumber == 1).Rank;
+        GameManager.p2.Rank = jogadores.Find(p => p.PlayerNumber == 2).Rank;
+        GameManager.p3.Rank = jogadores.Find(p => p.PlayerNumber == 3).Rank;
+        GameManager.p4.Rank = jogadores.Find(p => p.PlayerNumber == 4).Rank;
 
     }
 }

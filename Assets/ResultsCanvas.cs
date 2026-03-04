@@ -13,17 +13,15 @@ public class ResultsCanvas : MonoBehaviour
     void Start()
     {
         text = GameObject.Find("TextResults").GetComponent<TextMeshProUGUI>();
+        SetResults();
     }
 
     // Update is called once per frame
-    void Update()
+    void SetResults()
     {
         var newText = "";
 
-        var scene = SceneManager.GetActiveScene();
-
-        if (scene.name == "MiniGameRanking")
-        {
+        
             newText += "Mini-Game Results\n";
 
             newText += "\nP1: " + GameManager.p1.Rank.ToString();
@@ -39,7 +37,7 @@ public class ResultsCanvas : MonoBehaviour
             newText += "\nP4: " + GameManager.p4.Rank.ToString();
 
 
-
+            int winners = 0;
             Player[] players = { GameManager.p1, GameManager.p2, GameManager.p3, GameManager.p4 };
             bool draw = false;
             Player winner = GameManager.p1;
@@ -49,14 +47,15 @@ public class ResultsCanvas : MonoBehaviour
                 {
 
                     winner = players[i];
-
+                    winners++;
                 }
 
             }
-            newText += "\nCongratulations, Player " + winner.Number;
-
+            if (winners == 1) {
+                newText += "\nCongratulations, Player " + winner.Number;
+            }
 
             text.text = newText;
-        }
+        
     }
 }

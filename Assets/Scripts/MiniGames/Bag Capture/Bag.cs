@@ -17,6 +17,8 @@ public class Bag : MonoBehaviour
     public BoxCollider2D bc;
     public Rigidbody2D rb;
 
+    public int frames = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,10 +45,12 @@ public class Bag : MonoBehaviour
         {
            
             transform.position = owner.transform.position;
-            
-             
-            owner.GetComponent<BagCapturePlayer>().score += Time.deltaTime;
 
+            frames++;
+            if (frames >= 300) {
+                frames = 0;
+                owner.GetComponent<BagCapturePlayer>().score++;
+            }
         }
         else
         {

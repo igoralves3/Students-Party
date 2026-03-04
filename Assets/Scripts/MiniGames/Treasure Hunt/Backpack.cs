@@ -90,6 +90,9 @@ public class Backpack : MonoBehaviour
 
         pc.opening = false;
 
+      
+
         Physics2D.IgnoreCollision(bc, pc.bc);
+        bc.enabled = false;
     }
 }

@@ -147,14 +147,15 @@ public class BagCapturePlayer : MonoBehaviour
 
         if (bag.GetComponent<Bag>().owner != gameObject)
         {
-
-            speed = 1f;
+            agent.enabled = true;
+            speed = 2f;
         }
         else
         {
-            speed = 0.5f;
+            speed = 1f;
             if (isAI)
             {
+                agent.enabled = false;
                 agent.speed = speed;
             }
             
@@ -221,7 +222,7 @@ public class BagCapturePlayer : MonoBehaviour
                         var dir = (tt.transform.position - transform.position).normalized;
 
 
-
+                        
                         //dir = Quaternion.AngleAxis(Random.Range(0, 179), Vector3.forward) * dir;
                         agent.SetDestination(tt.transform.position);
                     }
@@ -230,15 +231,7 @@ public class BagCapturePlayer : MonoBehaviour
                 {
 
                
-                timer += Time.deltaTime;
-
-                if (timer >= intervalo)
-                {
-                    if (agent.velocity.magnitude > speed)
-                    {
-                        agent.velocity = (agent.velocity.normalized) / 250.0f;
-                    }
-                    timer = 0f;
+               
                 
 
 
@@ -253,12 +246,12 @@ public class BagCapturePlayer : MonoBehaviour
                         Vector3 diferenca = transform.position - p.transform.position;
                         float distancia = diferenca.magnitude;
 
-                        if (distancia < 6f)
+                        if (distancia < 3f)
                         {
                             // Quanto mais perto, maior o peso
-                            float peso = 1f / Mathf.Max(distancia, 0.1f);
+                            float peso = 1f / Mathf.Max(distancia, speed);
 
-                            direcaoFuga += diferenca.normalized;// * peso;
+                        direcaoFuga += diferenca.normalized;// * peso;
                             playersProximos++;
                         }
                     }
@@ -268,18 +261,23 @@ public class BagCapturePlayer : MonoBehaviour
                         if (!fugindo)
                         {
                             direcaoAtual = transform.position;
+                        direcaoFuga = direcaoAtual;
                             fugindo = true;
                         }
 
                         direcaoFuga.Normalize();
 
+                        //transform.position += direcaoFuga * Time.deltaTime;
+
                         //  Suavização remove zigzag
                         //direcaoAtual = Vector2.Lerp(direcaoAtual, direcaoFuga, Time.deltaTime);
 
-                        if (Vector3.Distance(transform.position, direcaoAtual) < 6f) {
-                            Vector3 destino = transform.position + direcaoFuga * speed;
+                        if (Vector3.Distance(transform.position, direcaoAtual) < 3f) {
+                            //Vector3 destino = transform.position + direcaoFuga;
 
-                            if (NavMesh.SamplePosition(destino, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+                            transform.position += direcaoFuga * speed * Time.deltaTime;
+                        /*
+                            if (NavMesh.SamplePosition(destino, out NavMeshHit hit, speed, NavMesh.AllAreas))
                             {
                                 // Só atualiza se mudou bastante (evita micro ajustes)
                                if (Vector3.Distance(agent.destination, hit.position) > 0.5f)
@@ -287,21 +285,21 @@ public class BagCapturePlayer : MonoBehaviour
                                     agent.SetDestination(hit.position);
                                 }
                                
-                            }
+                            }*/
                         }
                         else
                         {
-                            agent.ResetPath();
+                           // agent.ResetPath();
                         }
                            // agent.velocity = agent.desiredVelocity.normalized * speed;
                     }
                     else
                     {
                         fugindo = false;
-                        agent.ResetPath();
+                       // agent.ResetPath();
                     }
 
-                }
+                
             }
         }
     }
@@ -369,7 +367,7 @@ public class BagCapturePlayer : MonoBehaviour
     {
         stopped = true;
         rb.bodyType = RigidbodyType2D.Static; // congela totalmente o corpo
-        //bc.enabled = false; // desativa colisões
+       // bc.enabled = false; // desativa colisões
 
        
 
@@ -395,7 +393,7 @@ public class BagCapturePlayer : MonoBehaviour
                 {
                     if (bag.GetComponent<Bag>().owner == p)
                     {
-                        agent.SetDestination(pc.transform.position);
+                       // agent.SetDestination(pc.transform.position);
                     }
                 }
             }

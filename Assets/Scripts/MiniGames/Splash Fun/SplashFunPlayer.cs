@@ -9,6 +9,7 @@ using UnityEngine.Tilemaps;
 
 using UnityEngine.InputSystem;
 
+
 public class SplashFunPlayer : MonoBehaviour
 {
     public int PlayerNumber;
@@ -258,99 +259,48 @@ public class SplashFunPlayer : MonoBehaviour
 
     void AtualizaIAJr()
     {
-        
+
         if (wander_time > 0)
         {
             wander_time -= Time.deltaTime;
             transform.position += move_direction * Time.deltaTime;
-        }
-        else
-        {
-            RandomizeWander();
-        }
 
-        var players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (var player in players) {
-            if (player.GetComponent<SplashFunPlayer>() != this)
+
+
+
+
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (var player in players)
             {
-                var component = player.GetComponent<SplashFunPlayer>();
-                var deltaX = transform.position.x - component.transform.position.x;
-                var deltaY = transform.position.y - component.transform.position.y;
-
-                var deltaN = Vector3.Distance(transform.position, component.transform.position);
-
-                var podeVerOponente = false;
-
-                if (deltaX < 0 && dirThrow > 0)
+                if (player != this.gameObject)
                 {
-                    podeVerOponente = true;
-                }
+                    var component = player.GetComponent<SplashFunPlayer>();
+                    var deltaX = transform.position.x - component.transform.position.x;
+                    var deltaY = transform.position.y - component.transform.position.y;
 
-                else if (deltaX > 0 && dirThrow < 0)
-                {
-                    podeVerOponente = true;
-                }
-                else if (deltaY < 0 && dirThrowY > 0)
-                {
-                    podeVerOponente = true;
-                }
-                else if (deltaY > 0 && dirThrowY < 0)
-                {
-                    podeVerOponente = true;
-                }
+                    var deltaN = Vector3.Distance(transform.position, component.transform.position);
 
-                if (deltaN <= 10 && deltaN > 5)
-                {
-                    if (podeAtirar)
+                    var podeVerOponente = false;
+
+                    if (deltaX < 0 && dirThrow > 0)
                     {
-                        podeAtirar = false;
-                        delayShootFrames = 0;
+                        podeVerOponente = true;
                     }
-                    else
+
+                    if (deltaX > 0 && dirThrow < 0)
                     {
-                        delayShootFrames++;
-                        if (delayShootFrames >= 600)
-                        {
-                            delayShootFrames = 0;
-                            podeAtirar = true;
-                        }
+                        podeVerOponente = true;
                     }
-                    
-                }
-
-                if (deltaN <= 5)
-                {
-                    if (balloonsLeft > 0 && Random.Range(0f, 100f) >= 60f)
+                    if (deltaY < 0 && dirThrowY > 0)
                     {
-                        if (canThrowBalloon)
-                        {
-
-
-                            balloonsLeft--;
-                            canThrowBalloon = false;
-                            var newDrop = Instantiate(balloon, new Vector3(transform.position.x + dirThrow, transform.position.y + dirThrowY, 0), Quaternion.identity);
-                            var c = newDrop.GetComponent<Balloon>();
-
-                            
-
-                            c.dirX = (int)dirThrow * 2;
-                            c.dirY = (int)dirThrowY * 2;
-                            c.owner = this;
-                            delayB = 0;
-
-                            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
-                        }
-                        else
-                        {
-                            delayB++;
-                            if (delayB >= 600)
-                            {
-                                delayB = 0;
-                                canThrowBalloon = true;
-                            }
-                        }
+                        podeVerOponente = true;
                     }
-                    else
+                    if (deltaY > 0 && dirThrowY < 0)
+                    {
+                        podeVerOponente = true;
+                    }
+
+                    if (deltaN > 3 && deltaN < 10 && podeVerOponente)
                     {
                         if (podeAtirar)
                         {
@@ -366,17 +316,72 @@ public class SplashFunPlayer : MonoBehaviour
                                 podeAtirar = true;
                             }
                         }
+
+                    }
+
+                    if (deltaN <= 3 && podeVerOponente)
+                    {
+                        if (balloonsLeft > 0 && Random.Range(0f, 100f) >= 60f)
+                        {
+                            if (canThrowBalloon)
+                            {
+
+
+                                balloonsLeft--;
+                                canThrowBalloon = false;
+                                var newDrop = Instantiate(balloon, new Vector3(transform.position.x + dirThrow, transform.position.y + dirThrowY, 0), Quaternion.identity);
+                                var c = newDrop.GetComponent<Balloon>();
+
+
+
+                                c.dirX = (int)dirThrow * 2;
+                                c.dirY = (int)dirThrowY * 2;
+                                c.owner = this;
+                                delayB = 0;
+
+                                Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+                            }
+                            else
+                            {
+                                delayB++;
+                                if (delayB >= 600)
+                                {
+                                    delayB = 0;
+                                    canThrowBalloon = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (podeAtirar)
+                            {
+                                podeAtirar = false;
+                                delayShootFrames = 0;
+                            }
+                            else
+                            {
+                                delayShootFrames++;
+                                if (delayShootFrames >= 600)
+                                {
+                                    delayShootFrames = 0;
+                                    podeAtirar = true;
+                                }
+                            }
+                        }
+
+                    }
+                    if (podeVerOponente)
+                    {
+                        // break;
                     }
 
                 }
-                if (podeVerOponente)
-                {
-                    break;
-                }
             }
-        
         }
-
+        else
+        {
+            RandomizeWander();
+        }
     }
 
     void AtualizaIA()

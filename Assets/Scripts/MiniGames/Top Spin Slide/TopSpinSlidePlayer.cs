@@ -67,24 +67,26 @@ public class TopSpinSlidePlayer : MonoBehaviour
     {
         if (!isAI)
         {
-            if (playerInput.actions["Space"].IsPressed())
+            if (playerInput.actions["Space"].WasPressedThisFrame())
             {
                 if (canSlide) {
                     canSlide = false;
                     frames = 0;
+
+                    var t = Instantiate(top, transform.position, Quaternion.identity);
+
+
+                    t.owner = this;
                 }
             }
             if (!canSlide)
             {
                 frames++;
-                if (frames >= 1200)
+                if (frames >= 60)
                 {
                     frames = 0;
 
-                    var t = Instantiate(top,transform.position,Quaternion.identity);   
-                         
-
-                    t.owner = this;
+                   
 
                     canSlide=true;
                 }

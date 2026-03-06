@@ -1,6 +1,8 @@
 
+
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,6 +28,7 @@ public class HallwayFlagPlayer : MonoBehaviour
 
     private PlayerInput playerInput;
 
+    private float aiSpeed=2.0f;
 
     void Awake()
     {
@@ -87,6 +90,10 @@ public class HallwayFlagPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.x < mc.transform.position.x - 15f || transform.position.x > mc.transform.position.x + 15f)
+        {
+            KO = true;
+        }
         if (!KO) {
             if (!isAI)
             {
@@ -109,6 +116,60 @@ public class HallwayFlagPlayer : MonoBehaviour
             else
             {
                 transform.position += Vector3.right * 2.0f * Time.deltaTime;
+                if (aiSpeed == 0.0f)
+                {
+                    var players = GameObject.FindGameObjectsWithTag("Player");
+                    var mustSpeedUp = false;
+                    foreach (var p in players)
+                    {
+                        if (p != this.gameObject)
+                        {
+                            var delta = Vector3.Distance(transform.position, p.transform.position);
+                            if (delta <= 2.5f && transform.position.x > p.transform.position.x && transform.position.x+3.0f < mc.transform.position.x + 11f)
+                            {
+                                Debug.Log("speed up "+PlayerNumber);
+                                transform.position += Vector3.right * 3.0f * Time.deltaTime;
+                                
+
+                                mustSpeedUp = true;
+                                break;
+                            }
+                            
+                        }
+                       
+                    }
+                    if (mustSpeedUp == true)
+                    {
+                        transform.position += Vector3.right * 3.0f * Time.deltaTime;
+
+                    }
+                }
+                else
+                {
+                    var players = GameObject.FindGameObjectsWithTag("Player");
+                    var canSlowDown = false;
+                    foreach (var p in players)
+                    {
+                        if (p != this.gameObject)
+                        {
+                            var delta = Vector3.Distance(transform.position, p.transform.position);
+                            if (delta > 2.5f && transform.position.x > p.transform.position.x && transform.position.x - 3.0f > mc.transform.position.x - 11f)
+                            {
+                                Debug.Log("slow down " + PlayerNumber);
+                                aiSpeed = 0.0f;
+                                canSlowDown = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (canSlowDown==false)
+                    {
+                        transform.position += Vector3.right * 3.0f * Time.deltaTime;
+
+                    }
+                }
+               
+
                 if (Random.Range(0f,10f) > 5f)
                 {
                     if (Mathf.Abs(transform.position.x - mc.transform.position.x) <= 2.5f)

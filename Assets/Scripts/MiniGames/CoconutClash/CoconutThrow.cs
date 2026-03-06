@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -18,6 +19,7 @@ public class CoconutThrow : MonoBehaviour
     float frames = 0;
 
     public bool colidiu = false;
+    private BoxCollider2D bc;
 
     // Start is called before the first frame update
     void Start()
@@ -25,24 +27,30 @@ public class CoconutThrow : MonoBehaviour
         transform = GetComponent<Transform>();
         
         rb = GetComponent<Rigidbody2D>();
+        bc = GetComponent<BoxCollider2D>();
 
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
+
         var borders = GameObject.FindGameObjectsWithTag("Floor");
         foreach (var b in borders)
         {
-            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),b.GetComponent<TilemapCollider2D>());
+            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), b.GetComponent<TilemapCollider2D>());
 
         }
-        
-        
+        var borders3d = GameObject.FindGameObjectsWithTag("Floor3D");
+        foreach (var b in borders3d)
+        {
+            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), b.GetComponent<BoxCollider2D>());
+
+        }
 
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (colidiu)
         {
@@ -54,7 +62,7 @@ public class CoconutThrow : MonoBehaviour
             }
             return;
         }
-        //transform.position += new Vector3(dirX,dirY,0f) * 3.0f * Time.deltaTime;
+        transform.position += new Vector3(dirX,dirY,0f) * Time.deltaTime;
 
        
 
@@ -63,11 +71,11 @@ public class CoconutThrow : MonoBehaviour
 
         //rb.MovePosition(rb.position + new Vector2(dirX, dirY) * 3.0f * Time.deltaTime);
 
-        if (transform.position.x < -5 || transform.position.x > 5 || transform.position.y < -5 || transform.position.y > 5)
+        if (transform.position.x < -6 || transform.position.x > 6 || transform.position.y < -6 || transform.position.y > 6)
         {
             // Debug.Log("colidiu");
-            colidiu = true;
-            Destroy(gameObject,5);
+            //colidiu = true;
+            Destroy(gameObject);
         }
     }
 
@@ -76,22 +84,37 @@ public class CoconutThrow : MonoBehaviour
         
         if (collision.gameObject.CompareTag("Player") && !colidiu)
         {
+            Debug.Log("collision " + collision.gameObject.tag);
             colidiu = true;
-            //Destroy(gameObject);
+            Destroy(gameObject);
         }
-        if ( collision.gameObject.CompareTag("Teacher") && !colidiu)
+       else  if (collision.gameObject.CompareTag("Teacher") && !colidiu)
         {
             colidiu = true;
             owner.score++;
-            //Destroy(gameObject);
+            Destroy(gameObject);
         }
-        if (collision.gameObject.CompareTag("Coconut"))
+        else if (collision.gameObject.CompareTag("Coconut"))
         {
             if (owner.PlayerNumber != collision.gameObject.GetComponent<CoconutThrow>().owner.PlayerNumber && !colidiu)
             {
                 colidiu = true;
-                //Destroy(gameObject);
+                bc.enabled = false;
+                Destroy(gameObject);
             }
         }
+        else if(collision.gameObject.CompareTag("Floor"))
+        {
+            colidiu = true;
+            bc.enabled = false;
+            Destroy(gameObject);
+
+        }
+        else
+        {
+            Debug.Log("collision "+collision.gameObject.tag);
+            Destroy(gameObject);
+        }
+       
     }
 }

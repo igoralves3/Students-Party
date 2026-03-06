@@ -35,7 +35,7 @@ public class TopSpinSlideManager : MonoBehaviour
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         frames = 0;
-        timeLeft = 30.0f;
+        timeLeft = 60.0f;
 
         text = GameObject.Find("Placar").GetComponent<TextMeshProUGUI>();
     }

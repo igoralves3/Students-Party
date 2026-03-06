@@ -1,10 +1,12 @@
 
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class CoconutClashPlayer : MonoBehaviour
 {
@@ -29,6 +31,10 @@ public class CoconutClashPlayer : MonoBehaviour
     public float speedY = 0f;
 
     public Rigidbody2D rb;
+    private RigidbodyType2D tipoOriginal;
+
+    private BoxCollider2D bc;
+    private bool stopped = false;
 
     public void OnPlayerJoined(PlayerInput playerInput)
     {
@@ -87,6 +93,12 @@ public class CoconutClashPlayer : MonoBehaviour
 
 
             rb = GetComponent<Rigidbody2D>();
+
+        
+        tipoOriginal = rb.bodyType;
+
+        bc = GetComponent<BoxCollider2D>();
+
         score = 0;
         transform = GetComponent<Transform>();
 
@@ -170,8 +182,7 @@ public class CoconutClashPlayer : MonoBehaviour
 
     private void OnSpacePress(InputAction.CallbackContext ctx)
     {
-        Debug.Log("pressionou");
-    
+       
        
     }
 
@@ -179,6 +190,10 @@ public class CoconutClashPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (stopped)
+        {
+            return;
+        }
         if (!isAI)
         {
             transform.position += new Vector3(speedX, speedY, 0f) * Time.deltaTime;
@@ -224,19 +239,36 @@ public class CoconutClashPlayer : MonoBehaviour
                         c = Instantiate(coconut, new Vector3(transform.position.x, transform.position.y, 0f), Quaternion.identity);
 
                         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+                        var borders = GameObject.FindGameObjectsWithTag("Floor");
+                        foreach (var b in borders)
+                        {
+                            Physics2D.IgnoreCollision(c.GetComponent<BoxCollider2D>(), b.GetComponent<TilemapCollider2D>());
 
+                        }
                         var ct = c.GetComponent<CoconutThrow>();
+
+                      
+
 
                         ct.owner = this;
 
-                        if (PlayerNumber == 1)
+                        if (PlayerNumber == 3)
                         {
-                            ct.dirX = 1;
+                            c.GetComponent<CoconutThrow>().dirY = 2;
 
                         }
-                        else
+                        else if (PlayerNumber == 4)
                         {
-                            ct.dirX = -1;
+                            c.GetComponent<CoconutThrow>().dirY = -2;
+                        }
+                        if (PlayerNumber == 1)
+                        {
+                            c.GetComponent<CoconutThrow>().dirX = 2;
+
+                        }
+                        else if (PlayerNumber == 2)
+                        {
+                            c.GetComponent<CoconutThrow>().dirX = -2;
                         }
                     }
 
@@ -246,7 +278,7 @@ public class CoconutClashPlayer : MonoBehaviour
                 if (!canThrow)
                 {
                     waitThrowFrames++;
-                    if (waitThrowFrames >= 60)
+                    if (waitThrowFrames >= 600)
                     {
                         waitThrowFrames = 0;
                         canThrow = true;
@@ -270,29 +302,35 @@ public class CoconutClashPlayer : MonoBehaviour
                         c = Instantiate(coconut, new Vector3(transform.position.x, transform.position.y, 0f), Quaternion.identity);
 
                         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+                        var borders = GameObject.FindGameObjectsWithTag("Floor");
+                        foreach (var b in borders)
+                        {
+                            Physics2D.IgnoreCollision(c.GetComponent<BoxCollider2D>(), b.GetComponent<TilemapCollider2D>());
 
+                        }
                         var ct = c.GetComponent<CoconutThrow>();
 
+                      
 
                         ct.owner = this;
 
                         if (PlayerNumber == 3)
                         {
-                            c.GetComponent<CoconutThrow>().dirY = 1;
+                            c.GetComponent<CoconutThrow>().dirY = 2;
 
                         }
-                        else
+                        else if (PlayerNumber == 4)
                         {
-                            c.GetComponent<CoconutThrow>().dirY = -1;
+                            c.GetComponent<CoconutThrow>().dirY = -2;
                         }
                         if (PlayerNumber == 1)
                         {
-                            c.GetComponent<CoconutThrow>().dirX = 1;
+                            c.GetComponent<CoconutThrow>().dirX = 2;
 
                         }
-                        else
+                        else if (PlayerNumber == 2)
                         {
-                            c.GetComponent<CoconutThrow>().dirX = -1;
+                            c.GetComponent<CoconutThrow>().dirX = -2;
                         }
                     }
 
@@ -316,7 +354,7 @@ public class CoconutClashPlayer : MonoBehaviour
         {
             if (PlayerNumber == 1 || PlayerNumber == 2)
             {
-                if (teacher.GetComponent<Transform>().position.y > transform.position.y && transform.position.y <= 2)
+                if (teacher.transform.position.y > transform.position.y && transform.position.y <= 2)
                 {
                     transform.position += Vector3.up * Time.deltaTime;
                 }
@@ -327,30 +365,45 @@ public class CoconutClashPlayer : MonoBehaviour
 
                 var delta = teacher.GetComponent<Transform>().position.y - transform.position.y;
 
-                if (delta > -0.5 && delta < 0.5)
+                if (delta > -1.0 && delta < 1.0)
                 {
-                    if (canThrow && Random.Range(0f, 20f) >= 5f)
+                    if (canThrow && Random.Range(0f, 20f) >= 10f)
                     {
                         canThrow = false;
                         GameObject c;
                         c = Instantiate(coconut, new Vector3(transform.position.x, transform.position.y, 0f), Quaternion.identity);
 
-
+                        var ct = c.GetComponent<CoconutThrow>();
 
                         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+                        var borders = GameObject.FindGameObjectsWithTag("Floor");
+                        foreach (var b in borders)
+                        {
+                            Physics2D.IgnoreCollision(c.GetComponent<BoxCollider2D>(), b.GetComponent<TilemapCollider2D>());
 
-                        var ct = c.GetComponent<CoconutThrow>();
+                        }
+
+
 
                         ct.owner = this;
 
-                        if (PlayerNumber == 1)
+                        if (PlayerNumber == 3)
                         {
-                            ct.dirX = 1;
+                            c.GetComponent<CoconutThrow>().dirY = 2;
 
                         }
-                        else
+                        else if (PlayerNumber == 4)
                         {
-                            ct.dirX = -1;
+                            c.GetComponent<CoconutThrow>().dirY = -2;
+                        }
+                        if (PlayerNumber == 1)
+                        {
+                            c.GetComponent<CoconutThrow>().dirX = 2;
+
+                        }
+                        else if (PlayerNumber == 2)
+                        {
+                            c.GetComponent<CoconutThrow>().dirX = -2;
                         }
                     }
 
@@ -380,30 +433,44 @@ public class CoconutClashPlayer : MonoBehaviour
 
                 var delta = teacher.GetComponent<Transform>().position.x - transform.position.x;
 
-                if (delta > -0.5 && delta < 0.5)
+                if (delta > -1.0 && delta < 1.0)
                 {
-                    if (canThrow && Random.Range(0f, 20f) >= 5f)
+                    if (canThrow && Random.Range(0f, 20f) >= 10f)
                     {
                         canThrow = false;
                         var c = Instantiate(coconut, new Vector3(transform.position.x, transform.position.y, 0f), Quaternion.identity);
 
-
+                        var ct = c.GetComponent<CoconutThrow>();
 
                         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+                        var borders = GameObject.FindGameObjectsWithTag("Floor");
+                        foreach (var b in borders)
+                        {
+                            Physics2D.IgnoreCollision(c.GetComponent<BoxCollider2D>(), b.GetComponent<TilemapCollider2D>());
 
-                        var ct = c.GetComponent<CoconutThrow>();
+                        }
+
 
 
                         ct.owner = this;
 
                         if (PlayerNumber == 3)
                         {
-                            ct.dirY = 1;
+                            c.GetComponent<CoconutThrow>().dirY = 2;
 
                         }
-                        else
+                        else if(PlayerNumber == 4)
                         {
-                            ct.dirY = -1;
+                            c.GetComponent<CoconutThrow>().dirY = -2;
+                        }
+                        if (PlayerNumber == 1)
+                        {
+                            c.GetComponent<CoconutThrow>().dirX = 2;
+
+                        }
+                        else if (PlayerNumber == 2)
+                        {
+                            c.GetComponent<CoconutThrow>().dirX = -2;
                         }
                     }
 
@@ -424,6 +491,37 @@ public class CoconutClashPlayer : MonoBehaviour
 
         }
 
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        
+        if (collision.gameObject.CompareTag("Coconut") || collision.gameObject.CompareTag("Teacher"))
+        {
+           
+                StartCoroutine(PararTemporariamente());
+            
+        }
+
+    }
+
+    IEnumerator PararTemporariamente()
+    {
+        stopped = true;
+        Debug.Log("parado");
+        rb.bodyType = RigidbodyType2D.Static; // congela totalmente o corpo
+                                              // bc.enabled = false; // desativa colisões
+
+        bc.enabled = false;
+
+
+        yield return new WaitForSeconds(1f);
+
+
+        rb.bodyType = tipoOriginal;
+        bc.enabled = true;
+        stopped = false;
     }
 }
    

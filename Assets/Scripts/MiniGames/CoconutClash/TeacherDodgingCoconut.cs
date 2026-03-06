@@ -9,53 +9,67 @@ public class TeacherDodgingCoconut : MonoBehaviour
 
 
     private Transform transform;
-    private bool indoParaCima = false;
-    private bool indoParaEsquerda = false;
+    
 
     private int pluffFrames = 0;
+    private int stoppedFrames = 0;
     private Vector3 target;
-
-   
+    private bool pluffed = false;
+    public bool sliding = false;
+    private Vector3 dir=new Vector3(0f,0f,0f);
 
     public float distanciaSeguir = 10f; // Distância em que o jogador começa a fugir
     public float speed = 0.5f;
 
     public NavMeshAgent agent;
 
+    public Rigidbody2D rb;
+
 
     // Start is called before the first frame update
     void Start()
     {
         transform = GetComponent<Transform>();
-        indoParaCima = false;
-        indoParaEsquerda = false;
+        rb = GetComponent<Rigidbody2D>();
+       
         pluffFrames = 0;
 
         transform.position = new Vector3(0f,0f,0f);
 
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
+      // agent.updatePosition = false;
         agent.updateUpAxis = false;
 
 
     }
 
+    
     // Update is called once per frame
     void Update()
     {
 
-       
-
         
-        
-        var coconuts = GameObject.FindGameObjectsWithTag("Coconut");
 
-        if (coconuts.Length == 0)
+        if (pluffed)
         {
             pluffFrames++;
             if (pluffFrames >= 60)
             {
                 pluffFrames = 0;
+                pluffed = false;
+            }
+            return;
+        }
+        
+        var coconuts = GameObject.FindGameObjectsWithTag("Coconut");
+
+        if (coconuts.Length == 0)
+        {
+            stoppedFrames++;
+            if (stoppedFrames >= 60)
+            {
+                stoppedFrames = 0;
                 agent.SetDestination(new Vector3(Random.Range(-1f,1f),Random.Range(-1f, 1f), 0f) - transform.position);
             }
         }
@@ -83,7 +97,17 @@ public class TeacherDodgingCoconut : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Coconut"))
         {
-            Destroy(collision.gameObject);
+            if (!pluffed) {
+                
+                
+               // pluffFrames = 0;
+                pluffed = true;
+               
+            }
+        }
+        else if (collision.gameObject.CompareTag("Player"))
+        {
+            agent.SetDestination(new Vector3(0f,0f,0f));
         }
     }
    

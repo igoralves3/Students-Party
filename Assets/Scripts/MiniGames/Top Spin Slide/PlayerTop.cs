@@ -64,7 +64,7 @@ public class PlayerTop : MonoBehaviour
             {
                 owner.score++;
             }
-            Destroy(collision.gameObject);
+           // Destroy(collision.gameObject);
         }
     }
 }

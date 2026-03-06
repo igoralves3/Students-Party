@@ -254,7 +254,7 @@ public class PitchBattlePlayer : MonoBehaviour
             else
             {
                 rechargingFrames += 1 + (int)Time.deltaTime;
-                if (rechargingFrames >= 600)
+                if (rechargingFrames >= 60)
                 {
                     recharging = false;
                     rechargingFrames = 0;

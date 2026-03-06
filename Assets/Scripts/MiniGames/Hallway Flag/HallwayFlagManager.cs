@@ -44,7 +44,7 @@ public class HallwayFlagManager : MonoBehaviour
         else
         {
 
-            mc.GetComponent<Transform>().position += Vector3.right * 3.0f * Time.deltaTime;
+            mc.GetComponent<Transform>().position += Vector3.right * 4.0f * Time.deltaTime;
         }
     }
 

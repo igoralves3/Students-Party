@@ -1,12 +1,12 @@
 
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Collections.Specialized;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+
 
 public class TroubleTagTeacher : MonoBehaviour
 {
@@ -18,6 +18,8 @@ public class TroubleTagTeacher : MonoBehaviour
     public static int playersLeft;
 
     public NavMeshAgent agent;
+
+    private bool nearTarget = false;
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +71,30 @@ public class TroubleTagTeacher : MonoBehaviour
             }
 
             
+        }var delta = Vector3.Distance(transform.position,currentTarget.transform.position);
+        if (delta <= 2.5f)
+        {
+            nearTarget = true;
+            
         }
+        if (nearTarget)
+        {
+            if (Random.Range(0f, 10f) > 5f)
+            {
+                agent.speed = 4;
+                
+
+            }
+            else
+            {
+                agent.speed = 1;
+            }
+        }
+        else
+        {
+            agent.speed = 1;
+        }
+            
+        
     }
 }

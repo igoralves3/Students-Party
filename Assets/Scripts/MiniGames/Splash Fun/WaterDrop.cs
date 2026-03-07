@@ -37,7 +37,7 @@ public class WaterDrop : MonoBehaviour
         else
         {
             frames++;
-            if (frames >= 100)
+            if (frames >= 60)
             {
                 frames = 0;
                 Destroy(gameObject);

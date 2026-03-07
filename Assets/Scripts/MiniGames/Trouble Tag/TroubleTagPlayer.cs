@@ -1,13 +1,13 @@
 
+
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-
-using UnityEngine.InputSystem;
 
 
 public class TroubleTagPlayer : MonoBehaviour
@@ -25,6 +25,8 @@ public class TroubleTagPlayer : MonoBehaviour
 
     private TroubleTagTeacher teacher;
     public NavMeshAgent agent;
+
+    
 
     private PlayerInput playerInput;
 
@@ -92,55 +94,40 @@ public class TroubleTagPlayer : MonoBehaviour
             if (playerInput.actions["Left"].IsPressed())
             {
                 transform.position -= Vector3.right * Time.deltaTime;
-               /*
-                if (playerInput.actions["Space"].IsPressed() && canSlide)
-                {
-                    canSlide = false;
-                    //rb.Slide(-transform.right * 1f, Time.deltaTime,SlideMovement);
-                    rb.AddForce(-transform.right * 3f * Time.deltaTime, ForceMode2D.Impulse);
-                }*/
+              
             }
             if (playerInput.actions["Right"].IsPressed())
             {
                 transform.position += Vector3.right * Time.deltaTime;
-                /*
-                if (playerInput.actions["Space"].IsPressed() && canSlide)
-                {
-                    canSlide = false;
-                    rb.AddForce(transform.right * 3f * Time.deltaTime, ForceMode2D.Impulse);
-                }*/
+                
             }
             if (playerInput.actions["Up"].IsPressed())
             {
                 transform.position += Vector3.up * Time.deltaTime;
-                /*
-                if (playerInput.actions["Space"].IsPressed() && canSlide)
-                {
-                    canSlide = false;
-                    rb.AddForce(transform.up * 3f * Time.deltaTime, ForceMode2D.Impulse);
-                }*/
+               
             }
             if (playerInput.actions["Down"].IsPressed())
             {
                 transform.position -= Vector3.up * Time.deltaTime;
-                /*
-                if (playerInput.actions["Space"].IsPressed() && canSlide)
-                {
-                    canSlide = false;
-                    rb.AddForce(-transform.up * 3f * Time.deltaTime, ForceMode2D.Impulse);
-                }*/
+               
             }
 
         }
         else
         {
-            if (Vector3.Distance(transform.position, teacher.transform.position) <= 2.5f) {
+            if (Vector3.Distance(transform.position, teacher.transform.position) <= 10f) {
+                
+
                 var dir = (teacher.transform.position - transform.position).normalized;
 
-                dir = Quaternion.AngleAxis(Random.Range(0,179),Vector3.forward) * dir;
-                agent.SetDestination(transform.position - dir * 2.5f);
+                float angle = Random.Range(-90f, 90f);
+
+                dir = Quaternion.AngleAxis(angle, Vector3.forward) * dir;
+               
+
+                agent.SetDestination(transform.position - dir * 10f);
             }
-           
+            
         }
     }
 

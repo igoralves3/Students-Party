@@ -1395,7 +1395,7 @@ TilemapCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33159496}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1846,7 +1846,7 @@ Transform:
   m_GameObject: {fileID: 368246211}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 2, z: 0}
+  m_LocalPosition: {x: -5, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1881,6 +1881,7 @@ MonoBehaviour:
   STATE_CHASE: 2
   curState: 0
   curPlayer: {fileID: 0}
+  bc: {fileID: 368246213}
 --- !u!50 &368246216
 Rigidbody2D:
   serializedVersion: 5
@@ -2535,7 +2536,7 @@ Transform:
   m_GameObject: {fileID: 1077009329}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: -2, z: 0}
+  m_LocalPosition: {x: 5, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2570,6 +2571,7 @@ MonoBehaviour:
   STATE_CHASE: 2
   curState: 0
   curPlayer: {fileID: 0}
+  bc: {fileID: 1077009331}
 --- !u!50 &1077009334
 Rigidbody2D:
   serializedVersion: 5
@@ -2646,7 +2648,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 55226309-1604-4f23-9700-f671a311ad0d
+  m_DefaultActionMap: Player4
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &1102243657
@@ -2781,7 +2783,7 @@ Transform:
   m_GameObject: {fileID: 1102243657}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -2, z: 0}
+  m_LocalPosition: {x: -5, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2816,6 +2818,7 @@ MonoBehaviour:
   STATE_CHASE: 2
   curState: 0
   curPlayer: {fileID: 0}
+  bc: {fileID: 1102243659}
 --- !u!50 &1102243662
 Rigidbody2D:
   serializedVersion: 5
@@ -2892,7 +2895,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 985e4538-43d3-4621-b69d-a6662ca8ec3a
+  m_DefaultActionMap: Player3
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &1213275950
@@ -2929,7 +2932,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.43, y: -51.40001}
+  m_AnchoredPosition: {x: 0.43, y: -30}
   m_SizeDelta: {x: 478.86, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1213275952
@@ -4377,7 +4380,7 @@ Transform:
   m_GameObject: {fileID: 1971693079}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 2, z: 0}
+  m_LocalPosition: {x: 5, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4412,6 +4415,7 @@ MonoBehaviour:
   STATE_CHASE: 2
   curState: 0
   curPlayer: {fileID: 0}
+  bc: {fileID: 1971693081}
 --- !u!50 &1971693084
 Rigidbody2D:
   serializedVersion: 5
@@ -4488,7 +4492,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: fce31e00-3c70-46e5-b301-5482f59575f6
+  m_DefaultActionMap: Player2
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &2014557703

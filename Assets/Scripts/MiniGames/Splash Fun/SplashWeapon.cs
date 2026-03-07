@@ -31,38 +31,7 @@ public class SplashWeapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        switch (player.dir)
-        {
-            case SplashFunPlayer.leftDir:
-                dir = -0.2f;
-                dirY = 0f;
-                transform.position = player.transform.position+new Vector3(dir,0.0f,-1.0f);
-              
-                sprR.flipX=true;
-                break;
-            case SplashFunPlayer.rightDir:
-                dir = 0.2f;
-                dirY = 0f;
-                transform.position = player.transform.position + new Vector3(dir, 0.0f, -1.0f);
-               
-                sprR.flipX = false;
-                break;
-            case SplashFunPlayer.upDir:
-                dirY = 0.2f;
-                dir = 0f;
-                transform.position = player.transform.position + new Vector3(dir, 0.0f, -1.0f);
-              
-                break;
-            case SplashFunPlayer.downDir:
-                dirY = -0.2f;
-                dir = 0f;
-                transform.position = player.transform.position + new Vector3(dir, 0.0f, -1.0f);
-               
-                break;
-            default:
-                break;
-        }*/
+       
 
         if (player.dirThrow > 0)
         {
@@ -110,11 +79,14 @@ public class SplashWeapon : MonoBehaviour
             frames = 0;
             var newDrop = Instantiate(waterDrop, new Vector3(transform.position.x+2f*dir, transform.position.y+2f*dirY, 0), Quaternion.identity);
             var c = newDrop.GetComponent<WaterDrop>();
+
+            Physics2D.IgnoreCollision(player.gameObject.GetComponent<BoxCollider2D>(),c.gameObject.GetComponent<BoxCollider2D>());
+
             c.dirX = dir * 1f;
             c.dirY = dirY * 1f;
             c.owner = player;
         }
-       else // if (recarregando)
+       else 
         {
             frames++;
             if (frames>=600)

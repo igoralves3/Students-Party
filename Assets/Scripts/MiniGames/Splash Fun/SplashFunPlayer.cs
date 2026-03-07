@@ -3,11 +3,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Tilemaps;
-
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 
 public class SplashFunPlayer : MonoBehaviour
@@ -37,7 +38,7 @@ public class SplashFunPlayer : MonoBehaviour
 
     public int STATE_SEARCH = 1, STATE_CHASE = 2;
     public int curState;
-    public SplashFunPlayer curPlayer;
+    public GameObject curPlayer;
 
     private Vector3 move_direction;
     private float wander_time;
@@ -45,6 +46,8 @@ public class SplashFunPlayer : MonoBehaviour
     private bool zWasPressedLastFrame = false;
     private bool xWasPressedLastFrame = false;
     private PlayerInput playerInput;
+
+    public BoxCollider2D bc;
 
     void Awake()
     {
@@ -81,6 +84,8 @@ public class SplashFunPlayer : MonoBehaviour
             isAI = true;
         }
 
+        bc = GetComponent<BoxCollider2D>();
+
         dirThrow = -1f;
         delayShootFrames = 0;
         delayB = 0;
@@ -100,6 +105,7 @@ public class SplashFunPlayer : MonoBehaviour
                 dirThrow = 1f;
                 dirThrowY = 0f;
                 dir = rightDir;
+               
                 break;
             case 2:
                 dirThrow = 0f;
@@ -120,6 +126,8 @@ public class SplashFunPlayer : MonoBehaviour
                 break;
         }
 
+        
+
         var solo = GameObject.FindGameObjectsWithTag("Floor");
         foreach (var b in solo)
         {
@@ -128,12 +136,12 @@ public class SplashFunPlayer : MonoBehaviour
         }
         if (isAI)
         {
+            curState = STATE_SEARCH;
+
             RandomizeWander();
-
-
-
+            
             //agent.obstacleAvoidanceType = ObstacleAvoidanceType.GoodQualityObstacleAvoidance;
-            //curState = STATE_SEARCH;
+           
         }
     }
 
@@ -156,8 +164,8 @@ public class SplashFunPlayer : MonoBehaviour
                 dir = rightDir;
                 transform.position += Vector3.right * Time.deltaTime;
             }
-           
-            if (playerInput.actions["Up"].IsPressed())
+
+            else if (playerInput.actions["Up"].IsPressed())
             {
                 dir = upDir;
                 dirThrow = 0f;
@@ -230,102 +238,173 @@ public class SplashFunPlayer : MonoBehaviour
 
     void RandomizeWander()
     {
-        move_direction.x = Random.Range(-1f, 1f);
-        move_direction.y = Random.Range(-1f, 1f);
+        wander_time = Random.Range(1, 10);
+
+        var r = Random.Range(1,5);
+
+        switch (r) {
+            case 1:
+                move_direction.x = 1;
+                move_direction.y = 0;
+                break;
+            case 2:
+                move_direction.x = -1;
+                move_direction.y = 0;
+                break;
+            case 3:
+                move_direction.x = 0;
+                move_direction.y = 1;
+                break;
+            case 4:
+                move_direction.x = 0;
+                move_direction.y = -1;
+                break;
+            default:
+                break;
+        
+        }
+
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + move_direction, move_direction, wander_time);
+
+        if (hit.collider != null && hit.collider.tag == "Wall")
+        {
+            Debug.Log("Atingiu: " + hit.collider.name);
+            if (move_direction.x < hit.collider.transform.position.x && move_direction.x != 0)
+            {
+                move_direction.x = -1;
+            }
+            else if(move_direction.x > hit.collider.transform.position.x && move_direction.x != 0)
+            {
+                move_direction.x = 1;
+            }
+            if (move_direction.y < hit.collider.transform.position.y && move_direction.y != 0)
+            {
+                move_direction.y = -1;
+            }
+            else if(move_direction.y > hit.collider.transform.position.y && move_direction.y != 0)
+            {
+                move_direction.y = 1;
+            }
+        }
+
         if (move_direction.x > 0)
         {
             dirThrow = 1f;
-            dirThrowY = 0;
+            //dirThrowY = 0;
         }
         else if(move_direction.x < 0)
         {
             dirThrow = - 1f;
-            dirThrowY = 0;
+            //dirThrowY = 0;
         }
 
         if (move_direction.y > 0)
         {
-            dirThrow = 0;
+            //dirThrow = 0;
             dirThrowY = 1f;
         }
         else if (move_direction.y < 0)
         {
-            dirThrow = 0;
+            //dirThrow = 0;
             dirThrowY = - 1f;
         }
         
-        wander_time = Random.Range(1, 5);
+       
     }
 
     void AtualizaIAJr()
     {
-
-        if (wander_time > 0)
+        if (curState == STATE_SEARCH)
         {
-            wander_time -= Time.deltaTime;
-            transform.position += move_direction * Time.deltaTime;
 
 
 
-
-
-            var players = GameObject.FindGameObjectsWithTag("Player");
-            foreach (var player in players)
+            if (wander_time > 0)
             {
-                if (player != this.gameObject)
+                wander_time -= Time.deltaTime;
+
+                if (move_direction.x > 0)
                 {
-                    var component = player.GetComponent<SplashFunPlayer>();
-                    var deltaX = transform.position.x - component.transform.position.x;
-                    var deltaY = transform.position.y - component.transform.position.y;
+                    dirThrow = 1f;
+                    // dirThrowY = 0;
+                }
+                else if (move_direction.x < 0)
+                {
+                    dirThrow = -1f;
+                    //dirThrowY = 0;
+                }
+                else
+                {
+                    dirThrow = 0f;
+                }
 
-                    var deltaN = Vector3.Distance(transform.position, component.transform.position);
+                if (move_direction.y > 0)
+                {
+                    //dirThrow = 0;
+                    dirThrowY = 1f;
+                }
+                else if (move_direction.y < 0)
+                {
+                    //dirThrow = 0;
+                    dirThrowY = -1f;
+                }
+                else
+                {
+                    dirThrowY = 0f;
+                }
 
-                    var podeVerOponente = false;
+                transform.position += move_direction * Time.deltaTime;
 
-                    if (deltaX < 0 && dirThrow > 0)
+                var players = GameObject.FindGameObjectsWithTag("Player");
+                foreach (var player in players)
+                {
+                    if (player != this.gameObject)
                     {
-                        podeVerOponente = true;
-                    }
+                        var component = player.GetComponent<SplashFunPlayer>();
+                       
+                        var deltaN = Vector3.Distance(transform.position, component.transform.position);
 
-                    if (deltaX > 0 && dirThrow < 0)
-                    {
-                        podeVerOponente = true;
-                    }
-                    if (deltaY < 0 && dirThrowY > 0)
-                    {
-                        podeVerOponente = true;
-                    }
-                    if (deltaY > 0 && dirThrowY < 0)
-                    {
-                        podeVerOponente = true;
-                    }
+                        
 
-                    if (deltaN > 3 && deltaN < 10 && podeVerOponente)
-                    {
-                        if (podeAtirar)
+                        if (deltaN < 3.0f)
                         {
-                            podeAtirar = false;
-                            delayShootFrames = 0;
+                            curState = STATE_CHASE;
+                            curPlayer = player;
+
+
+
+
+                            return;
                         }
-                        else
-                        {
-                            delayShootFrames++;
-                            if (delayShootFrames >= 600)
-                            {
-                                delayShootFrames = 0;
-                                podeAtirar = true;
-                            }
-                        }
+
+
+                        
+                        
 
                     }
+                }
+                
 
-                    if (deltaN <= 3 && podeVerOponente)
+                RaycastHit2D hit = Physics2D.Raycast(transform.position +move_direction, move_direction, 5f);
+
+                if (hit.collider != null && hit.collider.tag == "Player")
+                {
+                    Debug.Log("Atingiu: " + hit.collider.name);
+
+                    var v1 = new Vector2(hit.point.x, hit.point.y);
+                    var v2 = new Vector2(transform.position.x, transform.position.y);
+
+
+                    var deltaN = (v1- v2).sqrMagnitude;
+                    Debug.Log(deltaN);
+                   if (deltaN < 4)
                     {
-                        if (balloonsLeft > 0 && Random.Range(0f, 100f) >= 60f)
+                        if (balloonsLeft > 0)
                         {
                             if (canThrowBalloon)
                             {
-
+                                
 
                                 balloonsLeft--;
                                 canThrowBalloon = false;
@@ -370,170 +449,113 @@ public class SplashFunPlayer : MonoBehaviour
                         }
 
                     }
-                    if (podeVerOponente)
+                    else if ((deltaN <= 25))
                     {
-                        // break;
-                    }
+                        if (podeAtirar)
+                        {
+                            podeAtirar = false;
+                            delayShootFrames = 0;
+                        }
+                        else
+                        {
+                            delayShootFrames++;
+                            if (delayShootFrames >= 600)
+                            {
+                                delayShootFrames = 0;
+                                podeAtirar = true;
+                            }
+                        }
 
+                    }
                 }
+
+            }
+            else
+            {
+
+                RandomizeWander();
+
             }
         }
         else
         {
-            RandomizeWander();
-        }
-    }
-
-    void AtualizaIA()
-    {
-        if (curState == STATE_SEARCH)
-        {
-            var players = GameObject.FindGameObjectsWithTag("Player");
-            var nearestPlayer = this;
-            var deltaN = 50f;
-            foreach (var p in players)
-            {
-                if (p.GetComponent<SplashFunPlayer>() != this)
-                {
-                    float delta = Vector3.Distance(transform.position, p.transform.position);
-                    if (delta <= deltaN)
-                    {
-                        nearestPlayer = p.GetComponent<SplashFunPlayer>();
-                        deltaN = delta;
-                    }
-                }
-            }
-
-            if (nearestPlayer != this)
-            {
-                if (deltaN <= 20f)
-                {
 
 
-
-                    curState = STATE_CHASE;
-
-                    curPlayer = nearestPlayer;
-                    agent.SetDestination(nearestPlayer.transform.position);
-
-
-
-                }
-            }
-            else
-            {
-                var deltaX = transform.position.x - nearestPlayer.transform.position.x;
-                var deltaY = transform.position.y - nearestPlayer.transform.position.y;
-
-                if (deltaX > 0f)
-                {
-                    dirThrow = -1f;
-                    //dirThrowY = 0f;
-                }
-                else if (deltaX < 0f)
-                {
-                    dirThrow = 1f;
-                    // dirThrowY = 0f;
-                }
-                else
-                {
-                    dirThrow = 0f;
-                }
-                if (deltaY > 0f)
-                {
-                    dirThrowY = -1f;
-                    //dirThrow = 0f;
-                }
-                else if (deltaY < 0f)
-                {
-                    dirThrowY = 1f;
-                    //dirThrow = 0f;
-                }
-                else
-                {
-                    dirThrowY = 0f;
-                }
-
-
-
-
-
-
-            }
-            }
-        else if (curState == STATE_CHASE)
-        {
-            var deltaX = transform.position.x - agent.destination.x;
-            var deltaY = transform.position.y - agent.destination.y;
-
-            if ((deltaX > 20f && deltaY > 20f) || curPlayer == null)
+            var d = Vector3.Distance(transform.position, curPlayer.transform.position);
+            if ( d > 3 || d < 1)
             {
                 curState = STATE_SEARCH;
-                agent.SetDestination(transform.position);   
+                RandomizeWander();
+                return;
+                
             }
-            if (deltaX < 10f && deltaY < 10f)
+            var deltaX = curPlayer.transform.position.x - transform.position.x;
+            var deltaY = curPlayer.transform.position.y - transform.position.y;
+
+            move_direction = new Vector2(-deltaX, -deltaY).normalized;
+
+            if (move_direction.x != 0 && move_direction.y != 0)
             {
-                agent.SetDestination(transform.position);
+                if (Random.Range(0f,10f) > 5f)
+                {
+                    move_direction.x = 0;
+                }
+                else
+                {
+                    move_direction.y = 0;
+                }
+
             }
-            
-            if (deltaX > 0f)
-            {
-                dirThrow = -1f;
-                //dirThrowY = 0f;
-            }
-            else if (deltaX < 0f)
+          
+
+            if (move_direction.x > 0)
             {
                 dirThrow = 1f;
-                // dirThrowY = 0f;
+               // dirThrowY = 0;
+            }
+            else if (move_direction.x < 0)
+            {
+                dirThrow = -1f;
+                //dirThrowY = 0;
             }
             else
             {
-             dirThrow = 0f;
+                dirThrow = 0f;
             }
-            if (deltaY > 0f)
+
+            if (move_direction.y > 0)
             {
-                dirThrowY = -1f;
-                //dirThrow = 0f;
-            }
-            else if (deltaY < 0f)
-            {
+                //dirThrow = 0;
                 dirThrowY = 1f;
-                //dirThrow = 0f;
+            }
+            else if (move_direction.y < 0)
+            {
+                //dirThrow = 0;
+                dirThrowY = -1f;
             }
             else
             {
                 dirThrowY = 0f;
             }
 
-            agent.SetDestination(curPlayer.transform.position);
+                transform.position += move_direction * Time.deltaTime;
 
-            float deltaN = Vector3.Distance(transform.position, agent.destination);
 
-            if (deltaN <= 20f && deltaN > 10f)
+
+            var deltaN = (curPlayer.transform.position- transform.position).sqrMagnitude;
+
+
+
+
+
+            
+
+            if (deltaN < 4)
             {
 
+                
 
-                if (podeAtirar)
-                {
-                    podeAtirar = false;
-                    delayShootFrames = 0;
-                }
-                else
-                {
-                    delayShootFrames++;
-                    if (delayShootFrames >= 6000)
-                    {
-                        delayShootFrames = 0;
-                        podeAtirar = true;
-                    }
-                }
-
-
-            }else if (deltaN <= 10f)
-            {
-
-
-                if (balloonsLeft > 0 && Random.Range(0f, 100f) >= 60f)
+                if (balloonsLeft > 0)
                 {
                     if (canThrowBalloon)
                     {
@@ -544,11 +566,16 @@ public class SplashFunPlayer : MonoBehaviour
                         var newDrop = Instantiate(balloon, new Vector3(transform.position.x + dirThrow, transform.position.y + dirThrowY, 0), Quaternion.identity);
                         var c = newDrop.GetComponent<Balloon>();
 
+
+
                         c.dirX = (int)dirThrow * 2;
                         c.dirY = (int)dirThrowY * 2;
                         c.owner = this;
                         delayB = 0;
-                    }else
+
+                        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+                    }
+                    else
                     {
                         delayB++;
                         if (delayB >= 600)
@@ -575,15 +602,32 @@ public class SplashFunPlayer : MonoBehaviour
                         }
                     }
                 }
-             }
+
+            }
+            else if (deltaN <= 25)
+            {
+                if (podeAtirar)
+                {
+                    podeAtirar = false;
+                    delayShootFrames = 0;
+                }
+                else
+                {
+                    delayShootFrames++;
+                    if (delayShootFrames >= 600)
+                    {
+                        delayShootFrames = 0;
+                        podeAtirar = true;
+                    }
+                }
+
+            }
+
+
+
 
 
         }
-            
-            
-           
-           
-
        
     }
 }

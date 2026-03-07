@@ -73,6 +73,8 @@ public class Balloon : MonoBehaviour
             c.dirX =(float) newAngleX;
             c.dirY = (float)newAngleY;
             c.owner = owner;
+
+            
         }
     }
 }

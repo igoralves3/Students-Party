@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using System.Collections.Specialized;
 
 public class TreasureHuntPlayer : MonoBehaviour
 {
@@ -121,11 +122,13 @@ public class TreasureHuntPlayer : MonoBehaviour
         }
         else
         {
-
+            
             if (mochilaAtual.isOpen || agent.destination == null)
             {
                 EscolheMochila();
+               
             }
+          
         }
     }
 
@@ -145,9 +148,14 @@ public class TreasureHuntPlayer : MonoBehaviour
         if (mochilasFechadas.Count > 0) {
             var indexMochila = Random.Range(0, mochilasFechadas.Count);
             mochilaAtual = mochilasFechadas[indexMochila];
+
             agent.SetDestination(mochilaAtual.transform.position);
+
+            
         }
     }
+
+   
 
     void OnCollisionEnter2D(Collision2D collision)
     {

@@ -1,9 +1,11 @@
 
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -45,6 +47,10 @@ public class SplashFunPlayer : MonoBehaviour
     private bool zWasPressedLastFrame = false;
     private bool xWasPressedLastFrame = false;
     private PlayerInput playerInput;
+
+    private bool atirou=false;
+
+    private int framesNear = 0;
 
     public BoxCollider2D bc;
 
@@ -263,25 +269,25 @@ public class SplashFunPlayer : MonoBehaviour
         
         }
 
+        
+        RaycastHit2D hit = Physics2D.Raycast(transform.position+move_direction, move_direction, 10f);
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + move_direction, move_direction, wander_time);
-
-        if (hit.collider != null && hit.collider.tag == "Wall")
+        if (hit.collider != null && hit.collider.tag == "Wall" && hit.collider.gameObject != gameObject)
         {
-          
-            if (move_direction.x < hit.point.x && move_direction.x != 0)
+            Debug.Log("wall "+PlayerNumber.ToString());
+            if (transform.position.x < hit.point.x && move_direction.x != 0)
             {
                 move_direction.x = -1;
             }
-            else if(move_direction.x > hit.point.x && move_direction.x != 0)
+            else if(transform.position.x > hit.point.x && move_direction.x != 0)
             {
                 move_direction.x = 1;
             }
-            if (move_direction.y < hit.point.y && move_direction.y != 0)
+            if (transform.position.y < hit.point.y && move_direction.y != 0)
             {
                 move_direction.y = -1;
             }
-            else if(move_direction.y > hit.point.y && move_direction.y != 0)
+            else if(transform.position.y > hit.point.y && move_direction.y != 0)
             {
                 move_direction.y = 1;
             }
@@ -320,8 +326,101 @@ public class SplashFunPlayer : MonoBehaviour
 
     }
 
+    void RandomizeDodge(Vector3 aim)
+    {
+        Debug.Log("Dodging");
+        wander_time = Random.Range(5, 10);
+
+        var r = Random.Range(1,3);
+        if (aim.x != 0)
+        {
+            
+            if (r == 1)
+            {
+                move_direction.x = 0;
+                move_direction.y = 1;
+            }
+            else
+            {
+                move_direction.x = 0;
+                move_direction.y = -1;
+            }
+
+        }else if (aim.y != 0)
+        {
+            if (r == 1)
+            {
+                move_direction.y = 0;
+                move_direction.x = 1;
+            }
+            else
+            {
+                move_direction.y = 0;
+                move_direction.x = -1;
+            }
+        }
+
+        var dir = new Vector3(dirThrow, dirThrowY, 0f);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position+move_direction, move_direction, 10f);
+
+        if (hit.collider != null && hit.collider.tag == "Wall" && hit.collider.gameObject != gameObject)
+        {
+            Debug.Log("wall " + PlayerNumber.ToString());
+            if (transform.position.x < hit.point.x && move_direction.x != 0)
+            {
+                move_direction.x = -1;
+            }
+            else if (transform.position.x > hit.point.x && move_direction.x != 0)
+            {
+                move_direction.x = 1;
+            }
+            if (transform.position.y < hit.point.y && move_direction.y != 0)
+            {
+                move_direction.y = -1;
+            }
+            else if (transform.position.y > hit.point.y && move_direction.y != 0)
+            {
+                move_direction.y = 1;
+            }
+        }
+
+        if (move_direction.x > 0)
+        {
+            dirThrow = 1f;
+            //dirThrowY = 0;
+        }
+        else if (move_direction.x < 0)
+        {
+            dirThrow = -1f;
+            //dirThrowY = 0;
+        }
+        else
+        {
+            dirThrow = 0f;
+        }
+
+        if (move_direction.y > 0)
+        {
+            //dirThrow = 0;
+            dirThrowY = 1f;
+        }
+        else if (move_direction.y < 0)
+        {
+            //dirThrow = 0;
+            dirThrowY = -1f;
+        }
+        else
+        {
+            dirThrowY = 0f;
+        }
+
+    }
+
     void AtualizaIAJr()
     {
+       
+       
+
         if (curState == STATE_SEARCH)
         {
 
@@ -374,7 +473,7 @@ public class SplashFunPlayer : MonoBehaviour
 
 
 
-                        if (deltaN < 4.0f)
+                        if (deltaN <= 3f)
                         {
                             curState = STATE_CHASE;
                             curPlayer = player;
@@ -383,20 +482,15 @@ public class SplashFunPlayer : MonoBehaviour
 
 
                             return;
+
                         }
-
-
-
-
-
                     }
                 }
-
-                TargetRaycast(new Vector3(1, 0, 0));
-                TargetRaycast(new Vector3(-1, 0, 0));
-                TargetRaycast(new Vector3(0, 1, 0));
-                TargetRaycast(new Vector3(0, 1, 0));
-
+                //    TargetRaycast(new Vector3(1, 0, 0));
+                  //  TargetRaycast(new Vector3(-1, 0, 0));
+                    //TargetRaycast(new Vector3(0, 1, 0));
+                    //TargetRaycast(new Vector3(0, 1, 0));
+                
             }
             else
             {
@@ -407,45 +501,78 @@ public class SplashFunPlayer : MonoBehaviour
         }
         else if(curState==STATE_CHASE)
         {
-
+           
 
             var d = Vector3.Distance(transform.position, curPlayer.transform.position);
-            if (d > 4)
+            if (d > 3)
             {
                 curState = STATE_SEARCH;
                 RandomizeWander();
                 return;
 
             }
-            if (d <= 3)
+            if (d <=3)
             {
+
                 move_direction.x = 0;
                 move_direction.y = 0;
 
-                var aim = (curPlayer.transform.position - transform.position).normalized;
+                var delta = curPlayer.transform.position - transform.position;
+                var aim = delta.normalized;
 
+                if (aim.x > 0)
+                {
+                    aim.x = 1;
+                }
+                else if (aim.x < 0)
+                {
+                    aim.x = -1;
+                }
+                if (aim.y > 0)
+                {
+                    aim.y = 1;
+                }
+                else if (aim.y < 0)
+                {
+                    aim.y = -1;
+                }
+                
                 if ((aim.x != 0) && (aim.y != 0))
                 {
-                    if (Random.Range(0f, 10f) > 5f)
-                    {
-                        aim.x = 0;
-                    }
-                    else
-                    {
-                        aim.y = 0;
-                    }
-
+                   
+                        if (Random.Range(0f, 10f) > 5f)
+                        {
+                            aim.x = 0;
+                        }
+                        else
+                        {
+                            aim.y = 0;
+                        }
+                    
                 }
-                dirThrow = aim.x;
-                dirThrowY = aim.y;
 
-                if (aim.x != 0 || aim.y != 0)
-                {
+               
+                    
+
+                    //curState = STATE_DODGE;
+                    //RandomizeDodge(move_direction);
+
+                    move_direction = aim;
+
+                    dirThrow = aim.x;
+                    dirThrowY = aim.y;
+
+
                     CheckOpponentShoot(aim);
-                }
+
+
+                //TargetRaycast(aim)
+                //
+                transform.position += move_direction * Time.deltaTime;
             }
             else
             {
+                /*
                 var deltaX = curPlayer.transform.position.x - transform.position.x;
                 var deltaY = curPlayer.transform.position.y - transform.position.y;
 
@@ -519,19 +646,13 @@ public class SplashFunPlayer : MonoBehaviour
                 {
                     dirThrowY = 0f;
                 }
+               // TargetRaycast(move_direction);
 
+                CheckOpponentShoot(move_direction);
 
                 //Debug.Log("dir = " + move_direction.ToString() + " " + PlayerNumber);
                 transform.position += move_direction * Time.deltaTime;
-
-                if (move_direction.x > 0 && move_direction.y == 0)
-                    TargetRaycast(new Vector3(1, 0, 0));
-                if (move_direction.x < 0 && move_direction.y == 0)
-                    TargetRaycast(new Vector3(-1, 0, 0));
-                if (move_direction.y > 0 && move_direction.y == 0)
-                    TargetRaycast(new Vector3(0, 1, 0));
-                if (move_direction.y < 0 && move_direction.y == 0)
-                    TargetRaycast(new Vector3(0, -1, 0));
+                */
             }
         }
         else
@@ -551,7 +672,7 @@ public class SplashFunPlayer : MonoBehaviour
 
 
 
-                        if (deltaN < 4.0f)
+                        if (deltaN <= 5f)
                         {
                             curState = STATE_CHASE;
                             curPlayer = player;
@@ -562,80 +683,62 @@ public class SplashFunPlayer : MonoBehaviour
                             return;
                         }
 
-
-
-
-
                     }
                 }
 
                 curState = STATE_SEARCH;
-               
+                //RandomizeWander();
             }
         }
     }
 
     public void CheckOpponentShoot(Vector3 aim)
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + aim, aim, 5f);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + aim, aim, 10f);
 
-        if (hit.collider != null && (hit.collider.tag == "Balloon" || hit.collider.tag == "Water"))
+        if (hit.collider != null && (hit.collider.tag == "Balloon" || hit.collider.tag == "Water") && hit.collider.gameObject != gameObject)
         {
-            if (hit.point.y == transform.position.y) {
-                if (aim.x > 0)
-                {
-                    aim.x = -1;
-                }
-                else if (aim.x < 0)
-                {
-                    aim.x = 1;
-                }
-            }
-            if (hit.point.x == transform.position.x) {
-                if (aim.y > 0)
-                {
-                    aim.y = -1;
-                }
-                else if (aim.y < 0)
-                {
-                    aim.y = 1;
-                }
-            }
+           
 
 
             move_direction = aim;
 
-            if ((move_direction.x != 0) && (move_direction.y != 0))
-            {
-                if (Random.Range(0f, 10f) > 5f)
-                {
-                    move_direction.x = 0;
-                }
-                else
-                {
-                    move_direction.y = 0;
-                }
-
-            }
-
-
-
+           
 
             dirThrow = move_direction.x;
             dirThrowY = move_direction.y;
 
-            wander_time = Random.Range(5,10);
+           // wander_time = Random.Range(5,10);
             curState = STATE_DODGE;
 
-           // RandomizeWander();
+           RandomizeDodge(aim);
         }
-        else
+        else if(hit.collider != null && (hit.collider.tag == "Player") && hit.collider.gameObject != gameObject)
         {
-            if (Random.Range(0f,10f) > 5f) {
-                TargetRaycast(aim);
 
-               
+            Debug.Log("player dir = " + gameObject.name + " " + hit.collider.gameObject.name);
+             move_direction = aim;
+           
+                dirThrow = aim.x;
+                dirThrowY = aim.y;
+
+            var r = Random.Range(0, 11);
+            if (r <= 5) {
+                TargetRaycast(aim);
             }
+            else
+            {
+                move_direction = new Vector3(0f,0f,0f);
+
+
+
+                dirThrow =aim.x;
+                dirThrowY = aim.y;
+
+                
+            }
+           
+
         }
     }
 
@@ -644,23 +747,9 @@ public class SplashFunPlayer : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position + aim, aim, 5f);
 
-        if (hit.collider != null && hit.collider.tag == "Player")
+        if (hit.collider != null && hit.collider.tag == "Player" && hit.collider.gameObject != gameObject)
         {
-            if (aim.x > 0)
-            {
-                aim.x = 1;
-            }else if (aim.x < 0)
-            {
-                aim.x = -1;
-            }
-            if (aim.y > 0)
-            {
-                aim.y = 1;
-            }
-            else if (aim.y < 0)
-            {
-                aim.y = -1;
-            }
+            
 
 
             dirThrow = aim.x;
@@ -671,7 +760,7 @@ public class SplashFunPlayer : MonoBehaviour
 
 
             var deltaN = (v1 - v2).sqrMagnitude;
-            if (deltaN <= 3)
+            if (deltaN <= 2)
             {
 
 
@@ -680,7 +769,7 @@ public class SplashFunPlayer : MonoBehaviour
                 {
                     if (canThrowBalloon)
                     {
-                        Debug.Log("balloon dir = "+aim.ToString());
+                        Debug.Log("balloon dir = "+aim.ToString() + " " + hit.collider.name);
 
                         balloonsLeft--;
                         canThrowBalloon = false;
@@ -695,14 +784,18 @@ public class SplashFunPlayer : MonoBehaviour
                         delayB = 0;
 
                         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
+
+                        atirou = true;
                     }
                     else
                     {
                         delayB++;
-                        if (delayB >= 600)
+                        if (delayB >= 60)
                         {
                             delayB = 0;
                             canThrowBalloon = true;
+
+                           
                         }
                     }
                 }
@@ -712,39 +805,48 @@ public class SplashFunPlayer : MonoBehaviour
                     {
                         podeAtirar = false;
                         delayShootFrames = 0;
+
+                        
                     }
                     else
                     {
                         delayShootFrames++;
-                        if (delayShootFrames >= 600)
+                        if (delayShootFrames >= 60)
                         {
                             delayShootFrames = 0;
                             podeAtirar = true;
+
+                            atirou = true;
                         }
                     }
                 }
 
             }
-            else if (deltaN <= 9)
+            else if (deltaN > 2 && deltaN <= 4f)
             {
                 if (podeAtirar)
                 {
                     podeAtirar = false;
                     delayShootFrames = 0;
+
+                    atirou = true;
                 }
                 else
                 {
                     delayShootFrames++;
-                    if (delayShootFrames >= 600)
+                    if (delayShootFrames >= 60)
                     {
                         delayShootFrames = 0;
                         podeAtirar = true;
+
+
+                       
                     }
                 }
 
             }
 
-
+         
         }
     }
 

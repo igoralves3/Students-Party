@@ -74,6 +74,9 @@ public class SplashWeapon : MonoBehaviour
         
         else if (atirando)
         {
+            /*
+            Debug.Log("water dir criada = " + player.ToString());
+
             atirando = false;
             recarregando = true;
             frames = 0;
@@ -82,9 +85,16 @@ public class SplashWeapon : MonoBehaviour
 
             Physics2D.IgnoreCollision(player.gameObject.GetComponent<BoxCollider2D>(),c.gameObject.GetComponent<BoxCollider2D>());
 
+            if (dir == 0 && dirY == 0)
+            {
+                Debug.Log("erro = " + player.ToString());
+
+            }
+
             c.dirX = dir * 1f;
             c.dirY = dirY * 1f;
             c.owner = player;
+            */
         }
        else 
         {

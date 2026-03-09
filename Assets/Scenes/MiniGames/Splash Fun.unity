@@ -1879,9 +1879,12 @@ MonoBehaviour:
   agent: {fileID: 0}
   STATE_SEARCH: 1
   STATE_CHASE: 2
+  STATE_DODGE: 3
   curState: 0
   curPlayer: {fileID: 0}
+  move_direction: {x: 0, y: 0, z: 0}
   bc: {fileID: 368246213}
+  waterDrop: {fileID: 8289555065279157869, guid: 1e0eb7a309a13ef40b0bd6bf1860ac8c, type: 3}
 --- !u!50 &368246216
 Rigidbody2D:
   serializedVersion: 5
@@ -2569,9 +2572,12 @@ MonoBehaviour:
   agent: {fileID: 0}
   STATE_SEARCH: 1
   STATE_CHASE: 2
+  STATE_DODGE: 3
   curState: 0
   curPlayer: {fileID: 0}
+  move_direction: {x: 0, y: 0, z: 0}
   bc: {fileID: 1077009331}
+  waterDrop: {fileID: 8289555065279157869, guid: 1e0eb7a309a13ef40b0bd6bf1860ac8c, type: 3}
 --- !u!50 &1077009334
 Rigidbody2D:
   serializedVersion: 5
@@ -2816,9 +2822,12 @@ MonoBehaviour:
   agent: {fileID: 0}
   STATE_SEARCH: 1
   STATE_CHASE: 2
+  STATE_DODGE: 3
   curState: 0
   curPlayer: {fileID: 0}
+  move_direction: {x: 0, y: 0, z: 0}
   bc: {fileID: 1102243659}
+  waterDrop: {fileID: 8289555065279157869, guid: 1e0eb7a309a13ef40b0bd6bf1860ac8c, type: 3}
 --- !u!50 &1102243662
 Rigidbody2D:
   serializedVersion: 5
@@ -4413,9 +4422,12 @@ MonoBehaviour:
   agent: {fileID: 0}
   STATE_SEARCH: 1
   STATE_CHASE: 2
+  STATE_DODGE: 3
   curState: 0
   curPlayer: {fileID: 0}
+  move_direction: {x: 0, y: 0, z: 0}
   bc: {fileID: 1971693081}
+  waterDrop: {fileID: 8289555065279157869, guid: 1e0eb7a309a13ef40b0bd6bf1860ac8c, type: 3}
 --- !u!50 &1971693084
 Rigidbody2D:
   serializedVersion: 5

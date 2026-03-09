@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -19,6 +20,8 @@ public class WaterDrop : MonoBehaviour
     {
         frames = 0;
 
+        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),owner.GetComponent<BoxCollider2D>());
+
         var solo = GameObject.FindGameObjectsWithTag("Floor");
         foreach (var b in solo)
         {
@@ -32,7 +35,7 @@ public class WaterDrop : MonoBehaviour
     {
         if (standard)
         {
-            transform.position += new Vector3(dirX * 10f, dirY * 10f, 0f) * Time.deltaTime;
+            transform.position += new Vector3(dirX * 2f, dirY * 2f, 0f) * Time.deltaTime;
         }
         else
         {
@@ -58,6 +61,10 @@ public class WaterDrop : MonoBehaviour
             if (owner != col.gameObject.GetComponent<SplashFunPlayer>()) {
                 owner.score++;
                 Destroy(gameObject);
+            }
+            else
+            {
+                Debug.Log("errado");
             }
         }
         if (col.gameObject.tag == "Water")

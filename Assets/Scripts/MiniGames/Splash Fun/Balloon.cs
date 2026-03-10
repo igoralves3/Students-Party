@@ -29,7 +29,7 @@ public class Balloon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        frames++;
+        frames+=(int) Time.deltaTime+1;
         if (frames >= 600)
         {
             SpawnParticles();

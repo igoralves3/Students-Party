@@ -192,7 +192,7 @@ public class SplashFunPlayer : MonoBehaviour
             bool xIsPressed = playerInput.actions["X"].ReadValue<float>() > 0f;
 
 
-            if (zWasPressedLastFrame && !zIsPressed)
+            if (playerInput.actions["Z"].WasPressedThisFrame())//(zWasPressedLastFrame && !zIsPressed)
             {
 
                 if (podeAtirar)
@@ -208,8 +208,8 @@ public class SplashFunPlayer : MonoBehaviour
             }
             if (!podeAtirar)
             {
-                delayShootFrames++;
-                if (delayShootFrames >= 600)
+                delayShootFrames+= (int)Time.deltaTime + 1;
+                if (delayShootFrames >= 120)
                 {
                     delayShootFrames = 0;
                     podeAtirar = true;
@@ -221,7 +221,7 @@ public class SplashFunPlayer : MonoBehaviour
             
             zWasPressedLastFrame = zIsPressed;
 
-            if (xWasPressedLastFrame && !xIsPressed)
+            if (playerInput.actions["X"].WasPressedThisFrame())//(xWasPressedLastFrame && !xIsPressed)
             {
                 if (balloonsLeft > 0)
                 {
@@ -238,8 +238,8 @@ public class SplashFunPlayer : MonoBehaviour
             }
             if(!canThrowBalloon)
             {
-                delayB++;
-                if (delayB >= 600)
+                delayB+= (int)Time.deltaTime + 1;
+                if (delayB >= 120)
                 {
                     delayB = 0;
                     canThrowBalloon = true;

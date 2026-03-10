@@ -41,7 +41,7 @@ public class ResultsCanvas : MonoBehaviour
             Player[] players = { GameManager.p1, GameManager.p2, GameManager.p3, GameManager.p4 };
             bool draw = false;
             Player winner = GameManager.p1;
-            for (int i = 1; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (players[i].Rank == 1)
                 {

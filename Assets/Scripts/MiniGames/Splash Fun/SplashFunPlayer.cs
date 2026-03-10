@@ -477,6 +477,11 @@ public class SplashFunPlayer : MonoBehaviour
                     dirThrowY = 0f;
                 }
 
+                if (col.gameObject == curPlayer)
+                {
+                    curState = STATE_DODGE;
+                    RandomizeDodge(new Vector3(dirThrow,dirThrowY,0f));
+                }
             }
         }
     }
@@ -621,16 +626,17 @@ public class SplashFunPlayer : MonoBehaviour
                     
                 }
 
-               
-                    
 
+
+                move_direction = aim;
                    
 
                     dirThrow = aim.x;
                     dirThrowY = aim.y;
 
+                transform.position += move_direction * Time.deltaTime;
 
-                    CheckOpponentShoot(aim);
+                CheckOpponentShoot(aim);
 
 
                
@@ -638,7 +644,7 @@ public class SplashFunPlayer : MonoBehaviour
 
            
             }
-            transform.position += move_direction * Time.deltaTime;
+           
         }
         else
         {

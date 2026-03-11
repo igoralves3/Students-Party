@@ -189,39 +189,39 @@ public class GridroomPaintPlayer : MonoBehaviour
 
 
                     transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+                    }
                 }
-            }
-            else if (r > 2.5f && r <= 5f)
-            {
-                if (dirX != -1f)
+                else if (r > 2.5f && r <= 5f)
                 {
-                    dirX = 1f;
-                    dirY = 0f;
+                    if (dirX != -1f)
+                    {
+                        dirX = 1f;
+                        dirY = 0f;
 
-                    transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+                        transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+                    }
                 }
-            }
-            else if (r > 5f && r <= 7.5f)
-            {
-                if (dirY != -1f)
+                else if (r > 5f && r <= 7.5f)
                 {
-                    dirY = 1f;
-                    dirX = 0f;
+                    if (dirY != -1f)
+                    {
+                        dirY = 1f;
+                        dirX = 0f;
 
 
-                    transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+                        transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+                    }
                 }
-            }
-            else
-            {
-                if (dirY != 1f)
+                else
                 {
-                    dirY = -1f;
-                    dirX = 0f;
+                    if (dirY != 1f)
+                    {
+                        dirY = -1f;
+                        dirX = 0f;
 
-                    transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+                        transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+                    }
                 }
-            }
                 
             }
             

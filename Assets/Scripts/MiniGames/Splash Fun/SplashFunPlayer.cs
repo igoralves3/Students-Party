@@ -1,5 +1,4 @@
 
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -257,7 +256,7 @@ public class SplashFunPlayer : MonoBehaviour
 
     void RandomizeWander()
     {
-        wander_time = Random.Range(5, 10);
+        wander_time = Random.Range(1,5);
 
         var r = Random.Range(1,5);
 
@@ -343,9 +342,10 @@ public class SplashFunPlayer : MonoBehaviour
     void RandomizeDodge(Vector3 aim)
     {
        
-        wander_time = Random.Range(5, 10);
+        wander_time = Random.Range(1,5);
 
         var r = Random.Range(1,3);
+        
         if (aim.x != 0)
         {
             
@@ -432,13 +432,13 @@ public class SplashFunPlayer : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.tag == "Wall" || col.gameObject.tag == "Player")
+        if (col.gameObject.tag == "Wall")
         {
             
             var ct = col.gameObject.transform;
             if (isAI)
             {
-                Debug.Log("ai colidiu "+PlayerNumber.ToString());
+             
 
                 if (move_direction.x != 0)
                 {
@@ -477,11 +477,93 @@ public class SplashFunPlayer : MonoBehaviour
                     dirThrowY = 0f;
                 }
 
-                if (col.gameObject == curPlayer)
+                
+            }
+        }if (col.gameObject.tag == "Player") {
+            if (isAI) {
+               
+
+                var ct = col.gameObject.transform;
+
+                var dir = (ct.position - transform.position).normalized;
+
+                int tx = Mathf.RoundToInt(dir.x);
+                int ty = Mathf.RoundToInt(dir.y);
+
+                if (tx > 0 && ty == 0)
                 {
-                    curState = STATE_DODGE;
-                    RandomizeDodge(new Vector3(dirThrow,dirThrowY,0f));
+                    move_direction.x = -tx;
+                    move_direction.y = ty;
+                }else if (tx < 0 && ty == 0)
+                {
+                    move_direction.x = -tx;
+                    move_direction.y = ty;
+
                 }
+                else if (ty > 0 && tx == 0)
+                {
+                    move_direction.x = tx;
+                    move_direction.y = -ty;
+
+                }
+                else if (ty < 0 && tx == 0)
+                {
+                    move_direction.x = tx;
+                    move_direction.y = -ty;
+
+                }
+                else
+                {
+                    if (Random.Range(1,11) > 5)
+                    {
+                        move_direction.x = -tx;
+                        move_direction.y = 0;
+                    }
+                    else
+                    {
+                        move_direction.x = 0;
+                        move_direction.y = -ty;
+                    }
+                }
+
+
+
+                if (move_direction.x > 0)
+                {
+                    dirThrow = 1f;
+
+                }
+                else if (move_direction.x < 0)
+                {
+                    dirThrow = -1f;
+
+                }
+                else
+                {
+                    dirThrow = 0f;
+                }
+
+                if (move_direction.y > 0)
+                {
+                    dirThrowY = 1f;
+                }
+                else if (move_direction.y < 0)
+                {
+
+                    dirThrowY = -1f;
+                }
+                else
+                {
+                    dirThrowY = 0f;
+                }
+                Debug.Log("ai colidiu " + PlayerNumber.ToString() + " dir " + move_direction.ToString());
+
+                //if (col.gameObject == curPlayer)
+                //{
+                curState = STATE_DODGE;
+                  wander_time = Random.Range(1,5); 
+                //RandomizeDodge(new Vector3(-dirThrow, -dirThrowY, 0f));
+                //}
             }
         }
     }
@@ -595,19 +677,19 @@ public class SplashFunPlayer : MonoBehaviour
                 var delta = curPlayer.transform.position - transform.position;
                 var aim = delta.normalized;
 
-                if (aim.x > 0)
+                if (delta.x > 2)
                 {
                     aim.x = 1;
                 }
-                else if (aim.x < 0)
+                else if (delta.x < -2)
                 {
                     aim.x = -1;
                 }
-                if (aim.y > 0)
+                if (delta.y > 2)
                 {
                     aim.y = 1;
                 }
-                else if (aim.y < 0)
+                else if (delta.y < -2)
                 {
                     aim.y = -1;
                 }
@@ -653,6 +735,7 @@ public class SplashFunPlayer : MonoBehaviour
 
             if (wander_time<=0)
             {
+                /*
                 foreach (var player in GameObject.FindGameObjectsWithTag("Player"))
                 {
                     if (player != this.gameObject)
@@ -676,9 +759,13 @@ public class SplashFunPlayer : MonoBehaviour
 
                     }
                 }
+                */
+              
 
                 curState = STATE_SEARCH;
-             
+                wander_time = Random.Range(1, 5);
+                // RandomizeWander();
+
             }
         }
     }
@@ -744,7 +831,7 @@ public class SplashFunPlayer : MonoBehaviour
             var deltaN = (v1 - v2).sqrMagnitude;
             if (!atirou) { 
             var r = Random.Range(1, 11);
-                if (r > 4)
+                if (r >= 8)
                 {
 
 

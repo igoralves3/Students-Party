@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
+using UnityEngine.InputSystem.Users;
+
 public class CoconutClashPlayer : MonoBehaviour
 {
     public int PlayerNumber;
@@ -50,26 +52,38 @@ public class CoconutClashPlayer : MonoBehaviour
             // Aqui você recebe o controle que está usando
             //device = playerInput.devices[PlayerNumber - 1];
 
-            playerInput.actions["Up"].started += OnMoveUp;
-            playerInput.actions["Up"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
 
-            playerInput.actions["Down"].started += OnMoveDown;
-            playerInput.actions["Down"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+                playerInput.actions["Left Stick"].started += OnMove;
 
-            playerInput.actions["Left"].started += OnMoveLeft;
-            playerInput.actions["Left"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+                playerInput.actions["D-Pad"].started += OnMove;
 
-            playerInput.actions["Right"].started += OnMoveRight;
-            playerInput.actions["Right"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+                playerInput.actions["Space"].started += OnSpacePress;
+            }
+            else
+            {
+                playerInput.actions["Up"].started += OnMoveUp;
+                playerInput.actions["Up"].canceled += ctx => { speedX = 0f; speedY = 0f; };
 
-            playerInput.actions["Space"].started += OnSpacePress;
+                playerInput.actions["Down"].started += OnMoveDown;
+                playerInput.actions["Down"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+
+                playerInput.actions["Left"].started += OnMoveLeft;
+                playerInput.actions["Left"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                playerInput.actions["Right"].canceled += ctx => { speedX = 0f; speedY = 0f; };
+
+                playerInput.actions["Space"].started += OnSpacePress;
+            }
         }
     }
 
     // Start is called before the first frame update
-    void Start()
+   void Start()
     {
-
+       
         if (GameManager.playersIngame >= PlayerNumber)
         {
             if (PlayerNumber==1)
@@ -82,9 +96,20 @@ public class CoconutClashPlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
+               
                 var gamepad = Gamepad.all[PlayerNumber-2]; // primeiro controle
+                Debug.Log(gamepad);
+
+               
+
+               
+
                 playerInput.SwitchCurrentControlScheme(gamepad);
+               
             }
+            isAI = false;
         }
         else
         {
@@ -186,6 +211,39 @@ public class CoconutClashPlayer : MonoBehaviour
        
     }
 
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        var moveInput = context.ReadValue<Vector2>().normalized;
+
+        if (PlayerNumber == 1 || PlayerNumber == 2)
+        {
+            if (transform.position.y >= -2)
+            {
+                speedY = -2f * moveInput.x;
+                // transform.position -= Vector3.up * Time.deltaTime;
+            }
+            else
+            {
+
+                speedY = 0f;
+            }
+        }
+
+        if (PlayerNumber == 3 || PlayerNumber == 4)
+        {
+            if (transform.position.x <= 2)
+            {
+                speedY = -2f * moveInput.y;
+                ///transform.position += Vector3.right * Time.deltaTime;
+            }
+            else
+            {
+
+                speedX = 0f;
+            }
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -197,6 +255,8 @@ public class CoconutClashPlayer : MonoBehaviour
         if (!isAI)
         {
             transform.position += new Vector3(speedX, speedY, 0f) * Time.deltaTime;
+
+           
 
             if (PlayerNumber==1 || PlayerNumber==2)
             {
@@ -225,8 +285,7 @@ public class CoconutClashPlayer : MonoBehaviour
             }
 
 
-            if (PlayerNumber == 1 || PlayerNumber == 2)
-            {
+           
 
 
                 if (playerInput.actions["Space"].WasPressedThisFrame())
@@ -278,7 +337,7 @@ public class CoconutClashPlayer : MonoBehaviour
                 if (!canThrow)
                 {
                     waitThrowFrames++;
-                    if (waitThrowFrames >= 600)
+                    if (waitThrowFrames >= 60)
                     {
                         waitThrowFrames = 0;
                         canThrow = true;
@@ -286,69 +345,7 @@ public class CoconutClashPlayer : MonoBehaviour
 
                     // canThrow = true;
                 }
-            }
-            else
-            {
-
-
-                if (playerInput.actions["Space"].WasPressedThisFrame())
-                {
-                    if (canThrow)
-                    {
-                        canThrow = false;
-                        waitThrowFrames = 0;
-
-                        GameObject c;
-                        c = Instantiate(coconut, new Vector3(transform.position.x, transform.position.y, 0f), Quaternion.identity);
-
-                        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), c.GetComponent<BoxCollider2D>());
-                        var borders = GameObject.FindGameObjectsWithTag("Floor");
-                        foreach (var b in borders)
-                        {
-                            Physics2D.IgnoreCollision(c.GetComponent<BoxCollider2D>(), b.GetComponent<TilemapCollider2D>());
-
-                        }
-                        var ct = c.GetComponent<CoconutThrow>();
-
-                      
-
-                        ct.owner = this;
-
-                        if (PlayerNumber == 3)
-                        {
-                            c.GetComponent<CoconutThrow>().dirY = 2;
-
-                        }
-                        else if (PlayerNumber == 4)
-                        {
-                            c.GetComponent<CoconutThrow>().dirY = -2;
-                        }
-                        if (PlayerNumber == 1)
-                        {
-                            c.GetComponent<CoconutThrow>().dirX = 2;
-
-                        }
-                        else if (PlayerNumber == 2)
-                        {
-                            c.GetComponent<CoconutThrow>().dirX = -2;
-                        }
-                    }
-
-                }
-
-                if (!canThrow)
-                {
-                    waitThrowFrames++;
-                    if (waitThrowFrames >= 600)
-                    {
-                        waitThrowFrames = 0;
-                        canThrow = true;
-                    }
-
-                }
-            }
-
-
+           
         }
         else
         {

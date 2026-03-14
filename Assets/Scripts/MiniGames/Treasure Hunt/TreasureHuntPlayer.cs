@@ -25,14 +25,83 @@ public class TreasureHuntPlayer : MonoBehaviour
 
     private PlayerInput playerInput;
 
+    private float speedX = 0f, speedY = 0f;
+
     void Awake()
     {
         if (!isAI)
         {
             playerInput = GetComponent<PlayerInput>();
 
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
 
+                playerInput.actions["Left Stick"].started += OnMove;
+
+                playerInput.actions["D-Pad"].started += OnMove;
+
+
+            }
+            else
+            {
+
+                playerInput.actions["Up"].started += OnMoveUp;
+                playerInput.actions["Up"].canceled += ctx => { if (speedY > 0) speedY = 0f; };
+
+                playerInput.actions["Down"].started += OnMoveDown;
+                playerInput.actions["Down"].canceled += ctx => { if (speedY < 0) speedY = 0f; };
+
+                playerInput.actions["Left"].started += OnMoveLeft;
+                playerInput.actions["Left"].canceled += ctx => { if (speedX < 0) speedX = 0f; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                playerInput.actions["Right"].canceled += ctx => { if (speedX > 0) speedX = 0f; };
+
+
+            }
         }
+    }
+
+    private void OnMoveUp(InputAction.CallbackContext ctx)
+    {
+
+
+        speedY = 1f;
+
+
+    }
+
+    private void OnMoveDown(InputAction.CallbackContext ctx)
+    {
+
+        speedY = -1f;
+
+    }
+
+    private void OnMoveLeft(InputAction.CallbackContext ctx)
+    {
+
+        speedX = -1f;
+
+    }
+
+    private void OnMoveRight(InputAction.CallbackContext ctx)
+    {
+
+        speedX = 1f;
+
+    }
+
+
+    private void OnMove(InputAction.CallbackContext ctx)
+    {
+        var moveInput = ctx.ReadValue<Vector2>().normalized;
+
+
+        speedX = moveInput.x;
+
+        speedY = moveInput.y;
+
     }
 
     // Start is called before the first frame update
@@ -51,6 +120,8 @@ public class TreasureHuntPlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
                 var gamepad = Gamepad.all[PlayerNumber - 2]; // primeiro controle
                 playerInput.SwitchCurrentControlScheme(gamepad);
             }
@@ -90,6 +161,7 @@ public class TreasureHuntPlayer : MonoBehaviour
       opening = false;
         if (!isAI)
         {
+            /*
             if (playerInput.actions["Left"].IsPressed())
             {
                 transform.position -= Vector3.right * speed * Time.deltaTime;
@@ -110,7 +182,32 @@ public class TreasureHuntPlayer : MonoBehaviour
             {
                 transform.position -= Vector3.up * speed * Time.deltaTime;
 
+            }*/
+
+            if (speedX < 0)
+            {
+                transform.position -= Vector3.right * speed * Time.deltaTime;
+
             }
+
+            if (speedX > 0)
+            {
+                transform.position += Vector3.right * speed * Time.deltaTime;
+
+            }
+            if (speedY > 0)
+            {
+                transform.position += Vector3.up * speed * Time.deltaTime;
+
+            }
+            if (speedY < 0)
+            {
+                transform.position -= Vector3.up * speed * Time.deltaTime;
+
+            }
+
+
+
             if (playerInput.actions["Space"].IsPressed())
             {
 

@@ -45,6 +45,18 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        InputSystem.onDeviceChange += OnDeviceChange;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        InputSystem.onDeviceChange -= OnDeviceChange;
+    }
+
     bool JaExisteJogadorComDispositivo(InputDevice device)
     {
         foreach (var player in players)
@@ -55,12 +67,20 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        if (device is Gamepad)
+        {
+            players[connectedPlayers-2].inputDevice = device;
+        }
+    }
+
     public void SetControllers()
     {
         var connectedStatus = 0;
            
                 
-                Debug.Log("Player 1 entrou com teclado");
+                Debug.Log("Player 1 entrou com teclado " + Keyboard.current);
 
                 players[connectedStatus].inputDevice = Keyboard.current;
         connectedStatus++;
@@ -85,11 +105,14 @@ public class GameManager : MonoBehaviour
     {
         if (Instance == null)
         {
-
+            SetControllers();
             Instance = this;
+
+            //DontDestroyOnLoad(playerInputManager.gameObject);
             DontDestroyOnLoad(gameObject);
 
-           
+
+
             if (EventSystem.current != null)
                 EventSystem.current.SetSelectedGameObject(null);
 
@@ -113,7 +136,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         connectedPlayers = 0;
-
+        playerInputManager = GetComponent<PlayerInputManager>();
         
         SetControllers();
         CheckControllers();

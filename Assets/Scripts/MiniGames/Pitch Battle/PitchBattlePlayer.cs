@@ -35,14 +35,100 @@ public class PitchBattlePlayer : MonoBehaviour
     private bool wasPressedLastFrame = false;
 
 
+    private bool up = false, down = false, left = false, right = false;
+
     void Awake()
     {
         if (!isAI)
         {
             playerInput = GetComponent<PlayerInput>();
 
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
 
+                playerInput.actions["Left Stick"].started += OnMove;
+
+                playerInput.actions["D-Pad"].started += OnMove;
+
+
+            }
+            else
+            {
+
+                playerInput.actions["Up"].started += OnMoveUp;
+                playerInput.actions["Up"].canceled += ctx => { up = false; };
+
+                playerInput.actions["Down"].started += OnMoveDown;
+                playerInput.actions["Down"].canceled += ctx => { down = false; };
+
+                playerInput.actions["Left"].started += OnMoveLeft;
+                playerInput.actions["Left"].canceled += ctx => { left = false; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                playerInput.actions["Right"].canceled += ctx => { right = false; };
+
+
+            }
         }
+    }
+
+    private void OnMoveUp(InputAction.CallbackContext ctx)
+    {
+        up = true;
+       // down = false;
+    }
+
+    private void OnMoveDown(InputAction.CallbackContext ctx)
+    {
+        down = true;
+       // up = false;
+    }
+
+    private void OnMoveLeft(InputAction.CallbackContext ctx)
+    {
+       left = true;
+      //  right= false;
+    }
+
+    private void OnMoveRight(InputAction.CallbackContext ctx)
+    {
+       right = true;
+       // left = false;
+    }
+
+
+    private void OnMove(InputAction.CallbackContext ctx)
+    {
+       
+            var moveInput = ctx.ReadValue<Vector2>().normalized;
+
+            if (moveInput.x < 0)
+            {
+            left = true;
+          //  right = false;
+            }
+
+
+            if (moveInput.x > 0)
+            {
+            right = true;
+           // left= false;
+            }
+            if (moveInput.y > 0)
+            {
+            up = true;
+          //  down = false;
+            }
+            if (moveInput.y < 0)
+            {
+            down = true;
+          //  up = false;
+            }
+        
+
+
+
+
     }
 
     // Start is called before the first frame update
@@ -60,6 +146,8 @@ public class PitchBattlePlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
                 var gamepad = Gamepad.all[playerNumber - 2]; // primeiro controle
                 playerInput.SwitchCurrentControlScheme(gamepad);
             }
@@ -137,9 +225,9 @@ public class PitchBattlePlayer : MonoBehaviour
 
         if (!isAI)
         {
-            bool up = false, down = false, left = false, right = false;
+            //bool up = false, down = false, left = false, right = false;
            
-
+        /*
             if (playerInput.actions["Left"].IsPressed())
             {
                 left = true;
@@ -155,7 +243,7 @@ public class PitchBattlePlayer : MonoBehaviour
             if (playerInput.actions["Down"].IsPressed())
             {
                 down = true;
-            }
+            }*/
 
             if ((right && down) && playerNumber==1)
             {

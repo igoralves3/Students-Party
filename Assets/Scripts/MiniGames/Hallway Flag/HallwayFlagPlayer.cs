@@ -3,7 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-
+using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,14 +30,64 @@ public class HallwayFlagPlayer : MonoBehaviour
 
     private float aiSpeed=2.0f;
 
+    private float speedX = 0f;
+
     void Awake()
     {
         if (!isAI)
         {
             playerInput = GetComponent<PlayerInput>();
 
-            
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
+
+                playerInput.actions["Left Stick"].started += OnMove;
+
+                playerInput.actions["D-Pad"].started += OnMove;
+
+
+            }
+            else
+            {
+
+               
+                playerInput.actions["Left"].started += OnMoveLeft;
+                playerInput.actions["Left"].canceled += ctx => { speedX = 0f; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                playerInput.actions["Right"].canceled += ctx => { speedX = 0f; };
+
+
+            }
         }
+    }
+
+    private void OnMoveLeft(InputAction.CallbackContext ctx)
+    {
+
+        speedX = -1f;
+        //transform.position += new Vector3(speedX, 0f, 0f) * 3.0f * Time.deltaTime;
+    }
+
+    private void OnMoveRight(InputAction.CallbackContext ctx)
+    {
+
+        speedX = 1f;
+
+        //transform.position += new Vector3(speedX, 0f, 0f) * 3.0f * Time.deltaTime;
+
+    }
+
+
+    private void OnMove(InputAction.CallbackContext ctx)
+    {
+        var moveInput = ctx.ReadValue<Vector2>().normalized;
+
+
+        speedX = moveInput.x;
+
+
+        //transform.position += new Vector3(speedX, 0f, 0f) * 3.0f * Time.deltaTime;
     }
 
     // Start is called before the first frame update
@@ -56,6 +106,8 @@ public class HallwayFlagPlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
                 var gamepad = Gamepad.all[PlayerNumber - 2]; // primeiro controle
                 playerInput.SwitchCurrentControlScheme(gamepad);
             }
@@ -103,6 +155,7 @@ public class HallwayFlagPlayer : MonoBehaviour
                     canJump = false;
                     rb.AddForce(transform.up * 10f, ForceMode2D.Impulse);
                 }
+                /*
                 if (playerInput.actions["Left"].IsPressed())
                 {
                     transform.position -= Vector3.right * 3.0f * Time.deltaTime;
@@ -110,8 +163,10 @@ public class HallwayFlagPlayer : MonoBehaviour
                 else if (playerInput.actions["Right"].IsPressed())
                 {
                     transform.position += Vector3.right * 3.0f * Time.deltaTime;
+                }*/
+                if (speedX != 0) {
+                    transform.position += new Vector3(speedX, 0f, 0f) * 3.0f * Time.deltaTime;
                 }
-
             }
             else
             {
@@ -125,18 +180,18 @@ public class HallwayFlagPlayer : MonoBehaviour
                         if (p != this.gameObject)
                         {
                             var delta = Vector3.Distance(transform.position, p.transform.position);
-                            if (delta <= 2.5f && transform.position.x > p.transform.position.x && transform.position.x+3.0f < mc.transform.position.x + 11f)
+                            if (delta <= 2.5f && transform.position.x > p.transform.position.x && transform.position.x + 3.0f < mc.transform.position.x + 11f)
                             {
-                                Debug.Log("speed up "+PlayerNumber);
+                                Debug.Log("speed up " + PlayerNumber);
                                 transform.position += Vector3.right * 3.0f * Time.deltaTime;
-                                
+
 
                                 mustSpeedUp = true;
                                 break;
                             }
-                            
+
                         }
-                       
+
                     }
                     if (mustSpeedUp == true)
                     {
@@ -162,22 +217,22 @@ public class HallwayFlagPlayer : MonoBehaviour
                             }
                         }
                     }
-                    if (canSlowDown==false)
+                    if (canSlowDown == false)
                     {
                         transform.position += Vector3.right * 3.0f * Time.deltaTime;
 
                     }
                 }
-               
 
-                if (Random.Range(0f,10f) > 5f)
+
+                if (Random.Range(0f, 10f) > 5f)
                 {
                     if (Mathf.Abs(transform.position.x - mc.transform.position.x) <= 2.5f)
                     {
                         transform.position += Vector3.right * 3.0f * Time.deltaTime;
                     }
 
-                    
+
                 }
 
                 var hurdles = GameObject.FindGameObjectsWithTag("Hurdle");
@@ -186,12 +241,12 @@ public class HallwayFlagPlayer : MonoBehaviour
 
                     if (Mathf.Abs(transform.position.x - h.transform.position.x) <= 2.5f && canJump)
                     {
-                        if (Random.Range(0f,10f) > 5f) {
+                        if (Random.Range(0f, 10f) > 5f) {
                             canJump = false;
                             rb.AddForce(transform.up * 10f, ForceMode2D.Impulse);
                         }
                     }
-                    
+
                 }
             } 
         }

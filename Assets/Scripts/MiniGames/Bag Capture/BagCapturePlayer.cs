@@ -5,9 +5,9 @@ using System.Collections.Specialized;
 
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Tilemaps;
-
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
+using UnityEngine.Tilemaps;
 
 public class BagCapturePlayer : MonoBehaviour
 {
@@ -52,14 +52,82 @@ public class BagCapturePlayer : MonoBehaviour
 
     private PlayerInput playerInput;
 
+    private float speedX = 0f, speedY = 0f;
+
     void Awake()
     {
         if (!isAI)
         {
             playerInput = GetComponent<PlayerInput>();
 
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
 
+                playerInput.actions["Left Stick"].started += OnMove;
+
+                playerInput.actions["D-Pad"].started += OnMove;
+
+                
+            }
+            else
+            {
+                playerInput.actions["Up"].started += OnMoveUp;
+                playerInput.actions["Up"].canceled += ctx => { if (speedY > 0) speedY = 0f; };
+
+                playerInput.actions["Down"].started += OnMoveDown;
+                playerInput.actions["Down"].canceled += ctx => { if (speedY < 0) speedY = 0f; };
+
+                playerInput.actions["Left"].started += OnMoveLeft;
+                playerInput.actions["Left"].canceled += ctx => { if (speedX < 0) speedX = 0f; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                playerInput.actions["Right"].canceled += ctx => { if (speedX > 0) speedX = 0f; };
+
+
+            }
         }
+    }
+
+    private void OnMoveUp(InputAction.CallbackContext ctx)
+    {
+
+        
+                speedY = 1f;
+               
+
+    }
+
+    private void OnMoveDown(InputAction.CallbackContext ctx)
+    {
+       
+                speedY = -1f;
+             
+    }
+
+    private void OnMoveLeft(InputAction.CallbackContext ctx)
+    {
+       
+                speedX = -1f;
+                
+    }
+
+    private void OnMoveRight(InputAction.CallbackContext ctx)
+    {
+       
+                speedX = 1f;
+             
+    }
+
+
+    private void OnMove(InputAction.CallbackContext ctx)
+    {
+        var moveInput = ctx.ReadValue<Vector2>().normalized;
+       
+       
+                speedX =moveInput.x;
+              
+                speedY = moveInput.y;
+             
     }
 
     // Start is called before the first frame update
@@ -78,6 +146,8 @@ public class BagCapturePlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
                 var gamepad = Gamepad.all[PlayerNumber - 2]; // primeiro controle
                 playerInput.SwitchCurrentControlScheme(gamepad);
             }
@@ -95,7 +165,7 @@ public class BagCapturePlayer : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
-        speed = 1f;
+        speed = 2f;
         bag = GameObject.FindGameObjectWithTag("Bag");
 
         if (isAI) {
@@ -147,7 +217,9 @@ public class BagCapturePlayer : MonoBehaviour
 
         if (bag.GetComponent<Bag>().owner != gameObject)
         {
-            agent.enabled = true;
+            if (isAI) {
+                agent.enabled = true;
+            }
             speed = 2f;
         }
         else
@@ -164,27 +236,34 @@ public class BagCapturePlayer : MonoBehaviour
        
         if (!isAI)
         {
-            if (playerInput.actions["Left"].IsPressed())
-            {
-                transform.position -= Vector3.right * speed * Time.deltaTime;
+            
+          
 
-            }
 
-            if (playerInput.actions["Right"].IsPressed())
-            {
-                transform.position += Vector3.right * speed * Time.deltaTime;
+                if (speedX < 0)
+                {
+                    transform.position -= Vector3.right * speed * Time.deltaTime;
 
-            }
-            if (playerInput.actions["Up"].IsPressed())
-            {
-                transform.position += Vector3.up * speed * Time.deltaTime;
+                }
 
-            }
-            if (playerInput.actions["Down"].IsPressed())
-            {
-                transform.position -= Vector3.up * speed * Time.deltaTime;
+                if (speedX > 0)
+                {
+                    transform.position += Vector3.right * speed * Time.deltaTime;
 
-            }
+                }
+                if (speedY > 0)
+                {
+                    transform.position += Vector3.up * speed * Time.deltaTime;
+
+                }
+                if (speedY < 0)
+                {
+                    transform.position -= Vector3.up * speed * Time.deltaTime;
+
+                }
+           
+
+           // transform.position += new Vector3(speedX, speedY,0f) * speed * Time.deltaTime;
         }
         else
         {

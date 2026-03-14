@@ -35,8 +35,162 @@ public class GridroomPaintPlayer : MonoBehaviour
         {
             playerInput = GetComponent<PlayerInput>();
 
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
 
+                playerInput.actions["Left Stick"].started += OnMove;
+
+                playerInput.actions["D-Pad"].started += OnMove;
+
+
+            }
+            else
+            {
+
+                playerInput.actions["Up"].started += OnMoveUp;
+                //playerInput.actions["Up"].canceled += ctx => { speedY = 0f; };
+
+                playerInput.actions["Down"].started += OnMoveDown;
+                //playerInput.actions["Down"].canceled += ctx => { speedY = 0f; };
+
+                playerInput.actions["Left"].started += OnMoveLeft;
+                //playerInput.actions["Left"].canceled += ctx => { speedX = 0f; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                //playerInput.actions["Right"].canceled += ctx => { speedX = 0f; };
+
+
+            }
         }
+    }
+
+    private void OnMoveUp(InputAction.CallbackContext ctx)
+    {
+        if (canChange)
+        {
+            canChange = false;
+            if (dirY != -1f)
+            {
+                dirY = 1f;
+                dirX = 0f;
+
+
+                transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+            }
+        }
+
+      
+    }
+
+    private void OnMoveDown(InputAction.CallbackContext ctx)
+    {
+        if (canChange)
+        {
+            canChange = false;
+            if (dirY != 1f)
+            {
+                dirY = -1f;
+                dirX = 0f;
+
+
+                transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+            }
+        }
+
+    }
+
+    private void OnMoveLeft(InputAction.CallbackContext ctx)
+    {
+        if (canChange)
+        {
+            canChange = false;
+            if (dirX != 1f)
+            {
+                dirX = -1f;
+                dirY = 0f;
+
+                transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+            }
+        }
+
+    }
+
+    private void OnMoveRight(InputAction.CallbackContext ctx)
+    {
+        if (canChange)
+        {
+            canChange = false;
+            if (dirX != -1f)
+            {
+                dirX = 1f;
+                dirY = 0f;
+
+                transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+            }
+        }
+
+    }
+
+
+    private void OnMove(InputAction.CallbackContext ctx)
+    {
+        if (canChange)
+        {
+            var moveInput = ctx.ReadValue<Vector2>().normalized;
+
+            if (moveInput.x < 0)
+            {
+                canChange = false;
+                if (dirX != 1f)
+                {
+                    dirX = -1f;
+                    dirY = 0f;
+
+                    transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+                }
+            }
+
+
+            if (moveInput.x > 0)
+            {
+                canChange = false;
+                if (dirX != -1f)
+                {
+                    dirX = 1f;
+                    dirY = 0f;
+
+                    transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+                }
+            }
+            if (moveInput.y > 0)
+            {
+                canChange = false;
+                if (dirY != -1f)
+                {
+                    dirY = 1f;
+                    dirX = 0f;
+
+
+                    transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+                }
+            }
+            if (moveInput.y < 0)
+            {
+                canChange = false;
+                if (dirY != 1f)
+                {
+                    dirY = -1f;
+                    dirX = 0f;
+
+
+                    transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
+                }
+            }
+        }
+
+        
+
+
     }
 
     // Start is called before the first frame update
@@ -54,6 +208,8 @@ public class GridroomPaintPlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
                 var gamepad = Gamepad.all[PlayerNumber - 2]; // primeiro controle
                 playerInput.SwitchCurrentControlScheme(gamepad);
             }
@@ -119,7 +275,7 @@ public class GridroomPaintPlayer : MonoBehaviour
         if (!isAI)
         {
             if (canChange)
-            {
+            {/*
 
                 if (playerInput.actions["Left"].IsPressed())
                 {
@@ -169,6 +325,7 @@ public class GridroomPaintPlayer : MonoBehaviour
                         transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
                     }
                 }
+            }*/
             }
         }
         else
@@ -185,10 +342,10 @@ public class GridroomPaintPlayer : MonoBehaviour
                     {
                         dirX = -1f;
                         dirY = 0f;
-                    
 
 
-                    transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
+
+                        transform.position = new Vector3(transform.position.x, currentTile.transform.position.y, 0f);
                     }
                 }
                 else if (r > 2.5f && r <= 5f)
@@ -222,21 +379,21 @@ public class GridroomPaintPlayer : MonoBehaviour
                         transform.position = new Vector3(currentTile.transform.position.x, transform.position.y, 0f);
                     }
                 }
-                
+
             }
-            
+
 
         }
 
-        
 
-        var d = speed * Time.deltaTime;
-        transform.position += new Vector3(dirX, dirY, 0f) * d;
-        
-        posX += (int)dirX;
-        posY -= (int)dirY;
 
-    }
+            var d = speed * Time.deltaTime;
+            transform.position += new Vector3(dirX, dirY, 0f) * d;
+
+            posX += (int)dirX;
+            posY -= (int)dirY;
+
+        }
 
         void OnCollisionEnter2D(Collision2D col)
         {
@@ -251,22 +408,22 @@ public class GridroomPaintPlayer : MonoBehaviour
                 {
                     dirY = -dirY;
                 }
-        }
-        if (col.gameObject.tag == "Wall")
-        {
-            var t = col.gameObject.transform;
-            if (dirX != 0)
-            {
-                dirX = -dirX;
             }
-            if (dirY != 0)
+            if (col.gameObject.tag == "Wall")
             {
-                dirY = -dirY;
+                var t = col.gameObject.transform;
+                if (dirX != 0)
+                {
+                    dirX = -dirX;
+                }
+                if (dirY != 0)
+                {
+                    dirY = -dirY;
+                }
             }
-        }
-            
+
 
         }
+
     
-   
 }

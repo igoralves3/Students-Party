@@ -55,13 +55,41 @@ public class SplashFunPlayer : MonoBehaviour
 
     public GameObject waterDrop;
 
+    private float speedX = 0f, speedY = 0f;
+
     void Awake()
     {
         if (!isAI)
         {
             playerInput = GetComponent<PlayerInput>();
 
+            if (playerInput.currentControlScheme == "Gamepad")
+            {
 
+                playerInput.actions["Left Stick"].started += OnMove;
+
+                playerInput.actions["D-Pad"].started += OnMove;
+
+
+            }
+            else
+            {
+                
+                playerInput.actions["Up"].started += OnMoveUp;
+                playerInput.actions["Up"].canceled += ctx => { if (speedY > 0) speedY = 0f; };
+
+                playerInput.actions["Down"].started += OnMoveDown;
+                playerInput.actions["Down"].canceled += ctx => { if (speedY < 0) speedY = 0f; };
+
+                playerInput.actions["Left"].started += OnMoveLeft;
+                playerInput.actions["Left"].canceled += ctx => { if (speedX < 0) speedX = 0f; };
+
+                playerInput.actions["Right"].started += OnMoveRight;
+                playerInput.actions["Right"].canceled += ctx => { if (speedX > 0) speedX = 0f; };
+
+
+
+            }
         }
     }
 
@@ -81,6 +109,8 @@ public class SplashFunPlayer : MonoBehaviour
             }
             else
             {
+                playerInput = GetComponent<PlayerInput>();
+
                 var gamepad = Gamepad.all[PlayerNumber - 2]; // primeiro controle
                 playerInput.SwitchCurrentControlScheme(gamepad);
             }
@@ -151,11 +181,53 @@ public class SplashFunPlayer : MonoBehaviour
         }
     }
 
+    private void OnMoveUp(InputAction.CallbackContext ctx)
+    {
+
+
+        speedY = 1f;
+
+
+    }
+
+    private void OnMoveDown(InputAction.CallbackContext ctx)
+    {
+
+        speedY = -1f;
+
+    }
+
+    private void OnMoveLeft(InputAction.CallbackContext ctx)
+    {
+
+        speedX = -1f;
+
+    }
+
+    private void OnMoveRight(InputAction.CallbackContext ctx)
+    {
+
+        speedX = 1f;
+
+    }
+
+
+    private void OnMove(InputAction.CallbackContext ctx)
+    {
+        var moveInput = ctx.ReadValue<Vector2>().normalized;
+
+
+        speedX = moveInput.x;
+
+        speedY = moveInput.y;
+
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (!isAI)
-        {
+        {/*
             if (playerInput.actions["Left"].IsPressed())
             {
                 dirThrow = -1f;
@@ -179,6 +251,36 @@ public class SplashFunPlayer : MonoBehaviour
                 transform.position += Vector3.up * Time.deltaTime;
             }
             else if (playerInput.actions["Down"].IsPressed())
+            {
+                dir = downDir;
+                dirThrow = 0f;
+                dirThrowY = -1f;
+                transform.position -= Vector3.up * Time.deltaTime;
+            }*/
+
+            if (speedX < 0)
+            {
+                dirThrow = -1f;
+                dirThrowY = 0f;
+                dir = leftDir;
+                transform.position -= Vector3.right * Time.deltaTime;
+            }
+            else if (speedX > 0)
+            {
+                dirThrow = 1f;
+                dirThrowY = 0f;
+                dir = rightDir;
+                transform.position += Vector3.right * Time.deltaTime;
+            }
+
+            else if (speedY > 0)
+            {
+                dir = upDir;
+                dirThrow = 0f;
+                dirThrowY = 1f;
+                transform.position += Vector3.up * Time.deltaTime;
+            }
+            else if (speedY < 0)
             {
                 dir = downDir;
                 dirThrow = 0f;

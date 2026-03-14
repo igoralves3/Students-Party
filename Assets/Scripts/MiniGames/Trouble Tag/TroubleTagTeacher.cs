@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -21,6 +22,8 @@ public class TroubleTagTeacher : MonoBehaviour
 
     private bool nearTarget = false;
 
+    private int maxSpeedFrames = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +32,8 @@ public class TroubleTagTeacher : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+
+        agent.speed = 2;
 
         playersLeft = 4;
 
@@ -71,18 +76,35 @@ public class TroubleTagTeacher : MonoBehaviour
             }
 
             
-        }var delta = Vector3.Distance(transform.position,currentTarget.transform.position);
+        }
+        foreach (var p in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (p != currentTarget)
+            {
+                var d = Vector3.Distance(transform.position, p.transform.position);
+                if (d <= 2.5f)
+                {
+                    currentTarget = p;
+                    break;
+                }
+            }
+        }
+
+       
+        /*
+        var delta = Vector3.Distance(transform.position,currentTarget.transform.position);
         if (delta <= 2.5f)
         {
             nearTarget = true;
             
         }
+
         if (nearTarget)
         {
-            if (Random.Range(0f, 10f) > 5f)
+            if (Random.Range(1, 11) > 8)
             {
-                agent.speed = 4;
-                
+               // agent.speed = 2;
+                //maxSpeedFrames = 0;
 
             }
             else
@@ -94,7 +116,16 @@ public class TroubleTagTeacher : MonoBehaviour
         {
             agent.speed = 1;
         }
-            
-        
+        if (agent.speed == 2)
+        {
+            maxSpeedFrames++;
+            if (maxSpeedFrames >= 60)
+            {
+                maxSpeedFrames = 0;
+                agent.speed = 1;
+            }
+        }*/
+
+        Debug.Log("teacher spd = "+agent.speed);
     }
 }

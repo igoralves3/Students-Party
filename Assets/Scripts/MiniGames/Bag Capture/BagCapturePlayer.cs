@@ -169,7 +169,7 @@ public class BagCapturePlayer : MonoBehaviour
         bag = GameObject.FindGameObjectWithTag("Bag");
 
         if (isAI) {
-            agent.speed = 1f;
+            agent.speed = speed;
             agent.acceleration = 100f;
             agent.angularSpeed = 120f;
             agent.autoBraking = false;
@@ -236,34 +236,37 @@ public class BagCapturePlayer : MonoBehaviour
        
         if (!isAI)
         {
-            
-          
+
+            /*
 
 
-                if (speedX < 0)
-                {
-                    transform.position -= Vector3.right * speed * Time.deltaTime;
+                  if (speedX < 0)
+                  {
+                      transform.position -= Vector3.right * speed * Time.deltaTime;
 
-                }
+                  }
 
-                if (speedX > 0)
-                {
-                    transform.position += Vector3.right * speed * Time.deltaTime;
+                  else if (speedX > 0)
+                  {
+                      transform.position += Vector3.right * speed * Time.deltaTime;
 
-                }
-                if (speedY > 0)
-                {
-                    transform.position += Vector3.up * speed * Time.deltaTime;
+                  }
+                  if (speedY > 0)
+                  {
+                      transform.position += Vector3.up * speed * Time.deltaTime;
 
-                }
-                if (speedY < 0)
-                {
-                    transform.position -= Vector3.up * speed * Time.deltaTime;
+                  }
+                  else if (speedY < 0)
+                  {
+                      transform.position -= Vector3.up * speed * Time.deltaTime;
 
-                }
-           
+                  }
+            */
+            Vector3 move = new Vector3(speedX, speedY, 0).normalized;
+            move = Vector3.ClampMagnitude(move, 1f);
+            //Debug.Log("Speed " + move + " " + PlayerNumber);
 
-           // transform.position += new Vector3(speedX, speedY,0f) * speed * Time.deltaTime;
+            transform.position += move * speed * Time.deltaTime;
         }
         else
         {

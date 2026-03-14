@@ -161,51 +161,12 @@ public class TreasureHuntPlayer : MonoBehaviour
       opening = false;
         if (!isAI)
         {
-            /*
-            if (playerInput.actions["Left"].IsPressed())
-            {
-                transform.position -= Vector3.right * speed * Time.deltaTime;
+            
+            Vector3 move = new Vector3(speedX, speedY, 0).normalized;
+            move = Vector3.ClampMagnitude(move, 1f);
+            Debug.Log("Speed " + move + " " + PlayerNumber);
 
-            }
-
-            if (playerInput.actions["Right"].IsPressed())
-            {
-                transform.position += Vector3.right * speed * Time.deltaTime;
-
-            }
-            if (playerInput.actions["Up"].IsPressed())
-            {
-                transform.position += Vector3.up * speed * Time.deltaTime;
-
-            }
-            if (playerInput.actions["Down"].IsPressed())
-            {
-                transform.position -= Vector3.up * speed * Time.deltaTime;
-
-            }*/
-
-            if (speedX < 0)
-            {
-                transform.position -= Vector3.right * speed * Time.deltaTime;
-
-            }
-
-            if (speedX > 0)
-            {
-                transform.position += Vector3.right * speed * Time.deltaTime;
-
-            }
-            if (speedY > 0)
-            {
-                transform.position += Vector3.up * speed * Time.deltaTime;
-
-            }
-            if (speedY < 0)
-            {
-                transform.position -= Vector3.up * speed * Time.deltaTime;
-
-            }
-
+            transform.position += move * speed * Time.deltaTime;
 
 
             if (playerInput.actions["Space"].IsPressed())

@@ -22,7 +22,7 @@ public class SplashFunPlayer : MonoBehaviour
 
     public GameObject balloon;
 
-    public int dir;
+    public int curDir;
     
     public bool podeAtirar = true;
     public const int leftDir = 1, rightDir = 2, upDir = 3, downDir = 4;
@@ -140,23 +140,23 @@ public class SplashFunPlayer : MonoBehaviour
             case 1:
                 dirThrow = 1f;
                 dirThrowY = 0f;
-                dir = rightDir;
+                curDir = rightDir;
                
                 break;
             case 2:
                 dirThrow = 0f;
                 dirThrowY = -1f;
-                dir = downDir;
+                curDir = downDir;
                 break;
             case 3:
                 dirThrow = 0f;
                 dirThrowY = 1f;
-                dir = upDir;
+                curDir = upDir;
                 break;
             case 4:
                 dirThrow = -1f;
                 dirThrowY = 0f;
-                dir = leftDir;
+                curDir = leftDir;
                 break;
             default:
                 break;
@@ -184,31 +184,31 @@ public class SplashFunPlayer : MonoBehaviour
     private void OnMoveUp(InputAction.CallbackContext ctx)
     {
 
-
+        curDir = upDir;
         speedY = 1f;
-
+        speedX = 0f;
 
     }
 
     private void OnMoveDown(InputAction.CallbackContext ctx)
     {
-
+        curDir = downDir;
         speedY = -1f;
-
+        speedX = 0f;
     }
 
     private void OnMoveLeft(InputAction.CallbackContext ctx)
     {
-
+        curDir = leftDir;
         speedX = -1f;
-
+        speedY = 0f;
     }
 
     private void OnMoveRight(InputAction.CallbackContext ctx)
     {
-
+        curDir = rightDir;
         speedX = 1f;
-
+        speedY = 0f;
     }
 
 
@@ -220,73 +220,85 @@ public class SplashFunPlayer : MonoBehaviour
         speedX = moveInput.x;
 
         speedY = moveInput.y;
+        if (speedX > 0 && speedY == 0)
+        {
+            curDir = rightDir;
+            
+        }else if (speedX < 0 && speedY == 0)
+        {
+            curDir = leftDir;
+        }else if(speedY > 0 && speedX == 0)
+            {
+                curDir = upDir;
 
+            }
+            else if (speedY < 0 && speedX == 0)
+            {
+                curDir = downDir;
+        }
+        else
+        {
+            switch(curDir){
+                case leftDir:
+                    speedY = 0;
+                    break;
+                    case rightDir:
+                    speedY = 0;
+                    break;
+                case upDir:
+                    speedX = 0;
+                    break;
+                case downDir:
+                    speedX = 0;
+                    break;
+
+                default:
+
+                    break;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         if (!isAI)
-        {/*
-            if (playerInput.actions["Left"].IsPressed())
+        {
+
+            if (curDir == leftDir)
             {
                 dirThrow = -1f;
                 dirThrowY = 0f;
-                dir = leftDir;
-                transform.position -= Vector3.right * Time.deltaTime;
+                //dir = leftDir;
+                //transform.position -= Vector3.right * Time.deltaTime;
             }
-            else if (playerInput.actions["Right"].IsPressed())
+            else if (curDir == rightDir)
             {
                 dirThrow = 1f;
                 dirThrowY = 0f;
-                dir = rightDir;
-                transform.position += Vector3.right * Time.deltaTime;
+               // dir = rightDir;
+                //transform.position += Vector3.right * Time.deltaTime;
             }
 
-            else if (playerInput.actions["Up"].IsPressed())
+            else if (curDir == upDir)
             {
-                dir = upDir;
+                //dir = upDir;
                 dirThrow = 0f;
                 dirThrowY = 1f;
-                transform.position += Vector3.up * Time.deltaTime;
+                //transform.position += Vector3.up * Time.deltaTime;
             }
-            else if (playerInput.actions["Down"].IsPressed())
+            else if (curDir == downDir)
             {
-                dir = downDir;
+                // dir = downDir;
                 dirThrow = 0f;
                 dirThrowY = -1f;
-                transform.position -= Vector3.up * Time.deltaTime;
-            }*/
-
-            if (speedX < 0)
-            {
-                dirThrow = -1f;
-                dirThrowY = 0f;
-                dir = leftDir;
-                transform.position -= Vector3.right * Time.deltaTime;
-            }
-            else if (speedX > 0)
-            {
-                dirThrow = 1f;
-                dirThrowY = 0f;
-                dir = rightDir;
-                transform.position += Vector3.right * Time.deltaTime;
+                //transform.position -= Vector3.up * Time.deltaTime;
             }
 
-            else if (speedY > 0)
-            {
-                dir = upDir;
-                dirThrow = 0f;
-                dirThrowY = 1f;
-                transform.position += Vector3.up * Time.deltaTime;
-            }
-            else if (speedY < 0)
-            {
-                dir = downDir;
-                dirThrow = 0f;
-                dirThrowY = -1f;
-                transform.position -= Vector3.up * Time.deltaTime;
-            }
+            Vector3 move = new Vector3(speedX, speedY, 0);
+            move = Vector3.ClampMagnitude(move, 1f);
+
+            transform.position += move * Time.deltaTime;
 
             // Lê o valor atual do botão
             bool zIsPressed = playerInput.actions["Z"].ReadValue<float>() > 0f;
@@ -822,11 +834,7 @@ public class SplashFunPlayer : MonoBehaviour
 
                 CheckOpponentShoot(aim);
 
-
-               
-               
-
-           
+    
             }
            
         }
@@ -837,36 +845,12 @@ public class SplashFunPlayer : MonoBehaviour
 
             if (wander_time<=0)
             {
-                /*
-                foreach (var player in GameObject.FindGameObjectsWithTag("Player"))
-                {
-                    if (player != this.gameObject)
-                    {
-                        var component = player.GetComponent<SplashFunPlayer>();
-
-                        var deltaN = Vector3.Distance(transform.position, component.transform.position);
-
-
-
-                        if (deltaN <= 5f)
-                        {
-                            curState = STATE_CHASE;
-                            curPlayer = player;
-
-
-
-
-                            return;
-                        }
-
-                    }
-                }
-                */
+                
               
 
                 curState = STATE_SEARCH;
                 wander_time = Random.Range(1, 5);
-                // RandomizeWander();
+                
 
             }
         }

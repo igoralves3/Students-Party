@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -31,6 +32,8 @@ public class TroubleTagPlayer : MonoBehaviour
     private PlayerInput playerInput;
 
     private float speedX = 0f, speedY = 0f;
+    float angle;
+
 
     void Awake()
     {
@@ -98,11 +101,12 @@ public class TroubleTagPlayer : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
 
-
-        agent = GetComponent<NavMeshAgent>();
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
-
+      
+            agent = GetComponent<NavMeshAgent>();
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+            agent.speed =2f;
+        
         rb = GetComponent<Rigidbody2D>();
 
         teacher = GameObject.FindWithTag("Teacher").GetComponent<TroubleTagTeacher>();
@@ -162,62 +166,27 @@ public class TroubleTagPlayer : MonoBehaviour
     {
         if (!isAI)
         {
-            /*
-            if (playerInput.actions["Left"].IsPressed())
-            {
-                transform.position -= Vector3.right * Time.deltaTime;
-              
-            }
-            if (playerInput.actions["Right"].IsPressed())
-            {
-                transform.position += Vector3.right * Time.deltaTime;
-                
-            }
-            if (playerInput.actions["Up"].IsPressed())
-            {
-                transform.position += Vector3.up * Time.deltaTime;
-               
-            }
-            if (playerInput.actions["Down"].IsPressed())
-            {
-                transform.position -= Vector3.up * Time.deltaTime;
-               
-            }*/
-            if (speedX < 0)
-            {
-                transform.position -= Vector3.right * Time.deltaTime;
+            Vector3 move = new Vector3(speedX, speedY, 0).normalized;
+            move = Vector3.ClampMagnitude(move, 1f);
+            Debug.Log("Speed " + move + " " + PlayerNumber);
 
-            }
-            if (speedX > 0)
-            {
-                transform.position += Vector3.right * Time.deltaTime;
+            transform.position += move * 2f * Time.deltaTime;
 
-            }
-            if (speedY > 0)
-            {
-                transform.position += Vector3.up * Time.deltaTime;
 
-            }
-            if (speedY < 0)
-            {
-                transform.position -= Vector3.up * Time.deltaTime;
-
-            }
         }
         else
         {
-            if (Vector3.Distance(transform.position, teacher.transform.position) <= 10f) {
-                
+           // if (Vector3.Distance(transform.position, teacher.transform.position) <= 10) {
+
 
                 var dir = (teacher.transform.position - transform.position).normalized;
 
-                float angle = Random.Range(-90f, 90f);
+                float angle =  Random.Range(-90f,90f);
+                 dir = Quaternion.AngleAxis(angle, Vector3.forward) * dir;
+                
+                agent.SetDestination(transform.position - dir * 10);
 
-                dir = Quaternion.AngleAxis(angle, Vector3.forward) * dir;
-               
-
-                agent.SetDestination(transform.position - dir * 10f);
-            }
+            //}
             
         }
     }

@@ -52,11 +52,7 @@ public class Bag : MonoBehaviour
                 owner.GetComponent<BagCapturePlayer>().score++;
             }
         }
-        else
-        {
-            Debug.Log("no owner");
-           
-        }
+       
     }
 
     void OnCollisionEnter2D(Collision2D collision)
